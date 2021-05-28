@@ -1,0 +1,836 @@
+{
+  "id": "opencor",
+  "name": "OpenCOR",
+  "version": "0.6",
+  "description": "Open source cross-platform modelling environment",
+  "urls": [
+    {
+      "type": "Home page",
+      "url": "https://opencor.ws/"
+    }
+  ],
+  "image": {
+    "url": "ghcr.io/biosimulators/biosimulators_opencor/opencor:0.6",
+    "format": {
+      "namespace": "EDAM",
+      "id": "format_3973",
+      "version": "1.2.0",
+      "supportedFeatures": []
+    },
+    "operatingSystemType": "Linux"
+  },
+  "authors": [
+    {
+      "firstName": "Alan",
+      "lastName": "Garny",
+      "identifiers": [
+        {
+          "namespace": "orcid",
+          "id": "0000-0001-7606-5888",
+          "url": "https://orcid.org/0000-0001-7606-5888"
+        }
+      ]
+    },
+    {
+      "firstName": "David",
+      "lastName": "Brooks",
+      "identifiers": [
+        {
+          "namespace": "orcid",
+          "id": "0000-0002-6758-2186",
+          "url": "https://orcid.org/0000-0002-6758-2186"
+        }
+      ]
+    },
+    {
+      "firstName": "Peter",
+      "middleName": "J.",
+      "lastName": "Hunter",
+      "identifiers": [
+        {
+          "namespace": "orcid",
+          "id": "0000-0001-9665-4145",
+          "url": "https://orcid.org/0000-0001-9665-4145"
+        }
+      ]
+    }
+  ],
+  "references": {
+    "identifiers": [],
+    "citations": [
+      {
+        "title": "OpenCOR: a modular and interoperable approach to computational biology",
+        "authors": "Alan Garny & Peter J. Hunter",
+        "journal": "Frontiers in Physiology",
+        "volume": 6,
+        "pages": "26",
+        "year": 2015,
+        "identifiers": [
+          {
+            "namespace": "doi",
+            "id": "10.3389/fphys.2015.00026",
+            "url": "https://doi.org/10.3389/fphys.2015.00026"
+          }
+        ]
+      }
+    ]
+  },
+  "license": {
+    "namespace": "SPDX",
+    "id": "GPL-3.0"
+  },
+  "algorithms": [
+    {
+      "id": "cvode",
+      "name": "C-language Variable-coefficient Ordinary Differential Equation solver",
+      "kisaoId": {
+        "namespace": "KISAO",
+        "id": "KISAO_0000019"
+      },
+      "modelingFrameworks": [
+        {
+          "namespace": "SBO",
+          "id": "SBO_0000293"
+        }
+      ],
+      "modelFormats": [
+        {
+          "namespace": "EDAM",
+          "id": "format_3240",
+          "version": "1.0",
+          "supportedFeatures": []
+        },
+        {
+          "namespace": "EDAM",
+          "id": "format_3240",
+          "version": "1.1",
+          "supportedFeatures": []
+        }
+      ],
+      "simulationFormats": [
+        {
+          "namespace": "EDAM",
+          "id": "format_3685",
+          "version": null,
+          "supportedFeatures": []
+        }
+      ],
+      "archiveFormats": [
+        {
+          "namespace": "EDAM",
+          "id": "format_3686",
+          "version": null,
+          "supportedFeatures": []
+        }
+      ],
+      "citations": [
+        {
+          "title": "CVODE, a stiff/nonstiff ODE solver in C",
+          "authors": "Scott D. Cohen, Alan C. Hindmarsh & Paul F. Dubois",
+          "journal": "Computers in Physics",
+          "volume": 10,
+          "issue": 2,
+          "pages": "138-143",
+          "year": 1996,
+          "identifiers": [
+            {
+              "namespace": "doi",
+              "id": "10.1063/1.4822377",
+              "url": "https://doi.org/10.1063/1.4822377"
+            }
+          ]
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Maximum step",
+          "id": "MaximumStepId",
+          "type": "float",
+          "value": null,
+          "recommendedRange": null,
+          "kisaoId": {
+            "namespace": "KISAO",
+            "id": "KISAO_0000467"
+          },
+          "availableSoftwareInterfaceTypes": [
+            "desktop application",
+            "library"
+          ]
+        },
+        {
+          "name": "Maximum number of steps",
+          "id": "MaximumNumberOfStepsId",
+          "type": "integer",
+          "value": "500",
+          "recommendedRange": null,
+          "kisaoId": {
+            "namespace": "KISAO",
+            "id": "KISAO_0000415"
+          },
+          "availableSoftwareInterfaceTypes": [
+            "desktop application",
+            "library"
+          ]
+        },
+        {
+          "name": "Integration method",
+          "id": "IntegrationMethodId",
+          "type": "kisaoId",
+          "value": "KISAO_0000288",
+          "recommendedRange": [
+            "KISAO_0000288",
+            "KISAO_0000280"
+          ],
+          "kisaoId": {
+            "namespace": "KISAO",
+            "id": "KISAO_0000475"
+          },
+          "availableSoftwareInterfaceTypes": [
+            "desktop application",
+            "library"
+          ]
+        },
+        {
+          "name": "Iteration type",
+          "id": "IterationTypeId",
+          "type": "string",
+          "value": "Newton",
+          "recommendedRange": [
+            "Newton",
+            "Functional"
+          ],
+          "kisaoId": {
+            "namespace": "KISAO",
+            "id": "KISAO_0000476"
+          },
+          "availableSoftwareInterfaceTypes": [
+            "desktop application",
+            "library"
+          ]
+        },
+        {
+          "name": "Linear solver",
+          "id": "LinearSolverId",
+          "type": "string",
+          "value": "Dense",
+          "recommendedRange": [
+            "Dense",
+            "Banded",
+            "Diagonal",
+            "GMRES",
+            "BiCGStab",
+            "TFQMR"
+          ],
+          "kisaoId": {
+            "namespace": "KISAO",
+            "id": "KISAO_0000477"
+          },
+          "availableSoftwareInterfaceTypes": [
+            "desktop application",
+            "library"
+          ]
+        },
+        {
+          "name": "Preconditioner",
+          "id": "PreconditionerId",
+          "type": "string",
+          "value": "Banded",
+          "recommendedRange": [
+            "Banded",
+            "None"
+          ],
+          "kisaoId": {
+            "namespace": "KISAO",
+            "id": "KISAO_0000478"
+          },
+          "availableSoftwareInterfaceTypes": [
+            "desktop application",
+            "library"
+          ]
+        },
+        {
+          "name": "Upper half-bandwidth",
+          "id": "UpperHalfBandwidthId",
+          "type": "integer",
+          "value": "0",
+          "recommendedRange": null,
+          "kisaoId": {
+            "namespace": "KISAO",
+            "id": "KISAO_0000479"
+          },
+          "availableSoftwareInterfaceTypes": [
+            "desktop application",
+            "library"
+          ]
+        },
+        {
+          "name": "Lower half-bandwidth",
+          "id": "LowerHalfBandwidthId",
+          "type": "integer",
+          "value": "0",
+          "recommendedRange": null,
+          "kisaoId": {
+            "namespace": "KISAO",
+            "id": "KISAO_0000480"
+          },
+          "availableSoftwareInterfaceTypes": [
+            "desktop application",
+            "library"
+          ]
+        },
+        {
+          "name": "Relative tolerance",
+          "id": "RelativeToleranceId",
+          "type": "float",
+          "value": "1e-7",
+          "recommendedRange": null,
+          "kisaoId": {
+            "namespace": "KISAO",
+            "id": "KISAO_0000209"
+          },
+          "availableSoftwareInterfaceTypes": [
+            "desktop application",
+            "library"
+          ]
+        },
+        {
+          "name": "Absolute tolerance",
+          "id": "AbsoluteToleranceId",
+          "type": "float",
+          "value": "1e-7",
+          "recommendedRange": null,
+          "kisaoId": {
+            "namespace": "KISAO",
+            "id": "KISAO_0000211"
+          },
+          "availableSoftwareInterfaceTypes": [
+            "desktop application",
+            "library"
+          ]
+        },
+        {
+          "name": "Interpolate solution",
+          "id": "InterpolateSolutionId",
+          "type": "boolean",
+          "value": "true",
+          "recommendedRange": null,
+          "kisaoId": {
+            "namespace": "KISAO",
+            "id": "KISAO_0000481"
+          },
+          "availableSoftwareInterfaceTypes": [
+            "desktop application",
+            "library"
+          ]
+        }
+      ],
+      "dependentDimensions": [
+        {
+          "namespace": "SIO",
+          "id": "SIO_000418"
+        }
+      ],
+      "dependentVariableTargetPatterns": [],
+      "availableSoftwareInterfaceTypes": [
+        "desktop application",
+        "library"
+      ],
+      "dependencies": [
+        {
+          "name": "SUNDIALS",
+          "version": null,
+          "required": true,
+          "freeNonCommercialLicense": true,
+          "url": "https://computing.llnl.gov/projects/sundials"
+        }
+      ]
+    },
+    {
+      "id": "forward-euler",
+      "name": "forward euler",
+      "kisaoId": {
+        "namespace": "KISAO",
+        "id": "KISAO_0000030"
+      },
+      "modelingFrameworks": [
+        {
+          "namespace": "SBO",
+          "id": "SBO_0000293"
+        }
+      ],
+      "modelFormats": [
+        {
+          "namespace": "EDAM",
+          "id": "format_3240",
+          "version": "1.0",
+          "supportedFeatures": []
+        },
+        {
+          "namespace": "EDAM",
+          "id": "format_3240",
+          "version": "1.1",
+          "supportedFeatures": []
+        }
+      ],
+      "simulationFormats": [
+        {
+          "namespace": "EDAM",
+          "id": "format_3685",
+          "version": null,
+          "supportedFeatures": []
+        }
+      ],
+      "archiveFormats": [
+        {
+          "namespace": "EDAM",
+          "id": "format_3686",
+          "version": null,
+          "supportedFeatures": []
+        }
+      ],
+      "citations": [],
+      "parameters": [
+        {
+          "name": "step",
+          "id": "step",
+          "type": "float",
+          "value": "1",
+          "recommendedRange": null,
+          "kisaoId": {
+            "namespace": "KISAO",
+            "id": "KISAO_0000483"
+          },
+          "availableSoftwareInterfaceTypes": [
+            "desktop application",
+            "library"
+          ]
+        }
+      ],
+      "dependentDimensions": [
+        {
+          "namespace": "SIO",
+          "id": "SIO_000418"
+        }
+      ],
+      "dependentVariableTargetPatterns": [],
+      "availableSoftwareInterfaceTypes": [
+        "desktop application",
+        "library"
+      ],
+      "dependencies": []
+    },
+    {
+      "id": "rk4",
+      "name": "fourth-order Runge-Kutta",
+      "kisaoId": {
+        "namespace": "KISAO",
+        "id": "KISAO_0000032"
+      },
+      "modelingFrameworks": [
+        {
+          "namespace": "SBO",
+          "id": "SBO_0000293"
+        }
+      ],
+      "modelFormats": [
+        {
+          "namespace": "EDAM",
+          "id": "format_3240",
+          "version": "1.0",
+          "supportedFeatures": []
+        },
+        {
+          "namespace": "EDAM",
+          "id": "format_3240",
+          "version": "1.1",
+          "supportedFeatures": []
+        }
+      ],
+      "simulationFormats": [
+        {
+          "namespace": "EDAM",
+          "id": "format_3685",
+          "version": null,
+          "supportedFeatures": []
+        }
+      ],
+      "archiveFormats": [
+        {
+          "namespace": "EDAM",
+          "id": "format_3686",
+          "version": null,
+          "supportedFeatures": []
+        }
+      ],
+      "citations": [],
+      "parameters": [
+        {
+          "name": "step",
+          "id": "step",
+          "type": "float",
+          "value": "1",
+          "recommendedRange": null,
+          "kisaoId": {
+            "namespace": "KISAO",
+            "id": "KISAO_0000483"
+          },
+          "availableSoftwareInterfaceTypes": [
+            "desktop application",
+            "library"
+          ]
+        }
+      ],
+      "dependentDimensions": [
+        {
+          "namespace": "SIO",
+          "id": "SIO_000418"
+        }
+      ],
+      "dependentVariableTargetPatterns": [],
+      "availableSoftwareInterfaceTypes": [
+        "desktop application",
+        "library"
+      ],
+      "dependencies": []
+    },
+    {
+      "id": "rk2",
+      "name": "second-order Runge-Kutta",
+      "kisaoId": {
+        "namespace": "KISAO",
+        "id": "KISAO_0000381"
+      },
+      "modelingFrameworks": [
+        {
+          "namespace": "SBO",
+          "id": "SBO_0000293"
+        }
+      ],
+      "modelFormats": [
+        {
+          "namespace": "EDAM",
+          "id": "format_3240",
+          "version": "1.0",
+          "supportedFeatures": []
+        },
+        {
+          "namespace": "EDAM",
+          "id": "format_3240",
+          "version": "1.1",
+          "supportedFeatures": []
+        }
+      ],
+      "simulationFormats": [
+        {
+          "namespace": "EDAM",
+          "id": "format_3685",
+          "version": null,
+          "supportedFeatures": []
+        }
+      ],
+      "archiveFormats": [
+        {
+          "namespace": "EDAM",
+          "id": "format_3686",
+          "version": null,
+          "supportedFeatures": []
+        }
+      ],
+      "citations": [],
+      "parameters": [
+        {
+          "name": "step",
+          "id": "step",
+          "type": "float",
+          "value": "1",
+          "recommendedRange": null,
+          "kisaoId": {
+            "namespace": "KISAO",
+            "id": "KISAO_0000483"
+          },
+          "availableSoftwareInterfaceTypes": [
+            "desktop application",
+            "library"
+          ]
+        }
+      ],
+      "dependentDimensions": [
+        {
+          "namespace": "SIO",
+          "id": "SIO_000418"
+        }
+      ],
+      "dependentVariableTargetPatterns": [],
+      "availableSoftwareInterfaceTypes": [
+        "desktop application",
+        "library"
+      ],
+      "dependencies": []
+    },
+    {
+      "id": "heun",
+      "name": "Heun",
+      "kisaoId": {
+        "namespace": "KISAO",
+        "id": "KISAO_0000301"
+      },
+      "modelingFrameworks": [
+        {
+          "namespace": "SBO",
+          "id": "SBO_0000293"
+        }
+      ],
+      "modelFormats": [
+        {
+          "namespace": "EDAM",
+          "id": "format_3240",
+          "version": "1.0",
+          "supportedFeatures": []
+        },
+        {
+          "namespace": "EDAM",
+          "id": "format_3240",
+          "version": "1.1",
+          "supportedFeatures": []
+        }
+      ],
+      "simulationFormats": [
+        {
+          "namespace": "EDAM",
+          "id": "format_3685",
+          "version": null,
+          "supportedFeatures": []
+        }
+      ],
+      "archiveFormats": [
+        {
+          "namespace": "EDAM",
+          "id": "format_3686",
+          "version": null,
+          "supportedFeatures": []
+        }
+      ],
+      "citations": [
+        {
+          "title": "An introduction to numerical analysis",
+          "authors": "Endre Süli & David Mayers",
+          "year": 2003,
+          "identifiers": [
+            {
+              "namespace": "isbn",
+              "id": "0-521-00794-1",
+              "url": "https://isbndb.com/book/0521007941"
+            }
+          ]
+        }
+      ],
+      "parameters": [
+        {
+          "name": "step",
+          "id": "step",
+          "type": "float",
+          "value": "1",
+          "recommendedRange": null,
+          "kisaoId": {
+            "namespace": "KISAO",
+            "id": "KISAO_0000483"
+          },
+          "availableSoftwareInterfaceTypes": [
+            "desktop application",
+            "library"
+          ]
+        }
+      ],
+      "dependentDimensions": [
+        {
+          "namespace": "SIO",
+          "id": "SIO_000418"
+        }
+      ],
+      "dependentVariableTargetPatterns": [],
+      "availableSoftwareInterfaceTypes": [
+        "desktop application",
+        "library"
+      ],
+      "dependencies": []
+    },
+    {
+      "id": "kinsol",
+      "name": "KINSOL",
+      "kisaoId": {
+        "namespace": "KISAO",
+        "id": "KISAO_0000282"
+      },
+      "modelingFrameworks": [
+        {
+          "namespace": "SBO",
+          "id": "SBO_0000293"
+        }
+      ],
+      "modelFormats": [
+        {
+          "namespace": "EDAM",
+          "id": "format_3240",
+          "version": "1.0",
+          "supportedFeatures": []
+        },
+        {
+          "namespace": "EDAM",
+          "id": "format_3240",
+          "version": "1.1",
+          "supportedFeatures": []
+        }
+      ],
+      "simulationFormats": [
+        {
+          "namespace": "EDAM",
+          "id": "format_3685",
+          "version": null,
+          "supportedFeatures": []
+        }
+      ],
+      "archiveFormats": [
+        {
+          "namespace": "EDAM",
+          "id": "format_3686",
+          "version": null,
+          "supportedFeatures": []
+        }
+      ],
+      "citations": [
+        {
+          "title": "PVODE and KINSOL: parallel software for differential and nonlinear systems",
+          "authors": "Alan C. Hindmarsh & Allan G. Taylor",
+          "year": 1998,
+          "identifiers": [
+            {
+              "namespace": "doi",
+              "id": "10.2172/304578",
+              "url": "https://doi.org/10.2172/304578"
+            }
+          ]
+        }
+      ],
+      "parameters": [
+        {
+          "name": "MaximumNumberOfIterationsId",
+          "id": "MaximumNumberOfIterationsId",
+          "type": "integer",
+          "value": "200",
+          "recommendedRange": null,
+          "kisaoId": {
+            "namespace": "KISAO",
+            "id": "KISAO_0000486"
+          },
+          "availableSoftwareInterfaceTypes": [
+            "desktop application",
+            "library"
+          ]
+        },
+        {
+          "name": "LinearSolverId",
+          "id": "LinearSolverId",
+          "type": "string",
+          "value": "Dense",
+          "recommendedRange": [
+            "Dense",
+            "Banded",
+            "GMRES",
+            "BiCGStab",
+            "TFQMR"
+          ],
+          "kisaoId": {
+            "namespace": "KISAO",
+            "id": "KISAO_0000477"
+          },
+          "availableSoftwareInterfaceTypes": [
+            "desktop application",
+            "library"
+          ]
+        },
+        {
+          "name": "UpperHalfBandwidthId",
+          "id": "UpperHalfBandwidthId",
+          "type": "integer",
+          "value": "0",
+          "recommendedRange": null,
+          "kisaoId": {
+            "namespace": "KISAO",
+            "id": "KISAO_0000479"
+          },
+          "availableSoftwareInterfaceTypes": [
+            "desktop application",
+            "library"
+          ]
+        },
+        {
+          "name": "Kisao0000480",
+          "id": "Kisao0000480",
+          "type": "integer",
+          "value": "0",
+          "recommendedRange": null,
+          "kisaoId": {
+            "namespace": "KISAO",
+            "id": "KISAO_0000480"
+          },
+          "availableSoftwareInterfaceTypes": [
+            "desktop application",
+            "library"
+          ]
+        }
+      ],
+      "dependentDimensions": [
+        {
+          "namespace": "SIO",
+          "id": "SIO_000418"
+        }
+      ],
+      "dependentVariableTargetPatterns": [],
+      "availableSoftwareInterfaceTypes": [
+        "desktop application",
+        "library"
+      ],
+      "dependencies": [
+        {
+          "name": "SUNDIALS",
+          "version": null,
+          "required": true,
+          "freeNonCommercialLicense": true,
+          "url": "https://computing.llnl.gov/projects/sundials"
+        }
+      ]
+    }
+  ],
+  "interfaceTypes": [
+    "command-line application",
+    "desktop application",
+    "library"
+  ],
+  "supportedOperatingSystemTypes": [
+    "Linux",
+    "Mac OS",
+    "Windows"
+  ],
+  "supportedProgrammingLanguages": [
+    {
+      "namespace": "Linguist",
+      "id": "Python"
+    }
+  ],
+  "funding": [
+    {
+      "funder": {
+        "namespace": "FunderRegistry",
+        "id": "100000057"
+      },
+      "grant": "P50-GM094503",
+      "url": "https://grantome.com/grant/NIH/P50-GM094503"
+    }
+  ],
+  "biosimulators": {
+    "specificationVersion": "1.0.0",
+    "imageVersion": "1.0.0",
+    "validated": false,
+    "validationTests": null
+  }
+}
