@@ -259,7 +259,7 @@ class TestCase(unittest.TestCase):
         sim.output_start_time = 0.
         sim.output_end_time = 50.
         sim.number_of_steps = 50000
-        variable_names = utils.validate_variable_xpaths(variables, task.model.source)        
+        variable_names = utils.validate_variable_xpaths(variables, task.model.source)
         opencor_sim = opencor.open_simulation(filename)
         opencor_sim.run()
         results = utils.get_results_from_opencor_simulation(opencor_sim, task, variables, variable_names)
