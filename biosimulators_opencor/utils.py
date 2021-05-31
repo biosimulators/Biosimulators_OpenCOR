@@ -94,13 +94,29 @@ def validate_simulation(task, variables):
                           error_summary='Data generator variables for task `{}` are invalid.'.format(task.id))
     opencor_variable_names = validate_variable_xpaths(variables, model.source)
 
-    if sim.output_start_time != sim.initial_time:
-        msg = 'Output start time `{}` must be the equal to the initial time `{}`.'.format(
-            sim.output_start_time, sim.initial_time)
+    opencor_task = copy.deepcopy(task)
+
+    opencor_sim = opencor_task.simulation
+    opencor_sim.number_of_steps = (
+        sim.output_end_time - sim.initial_time
+    ) / (
+        sim.output_end_time - sim.output_start_time
+    ) * sim.number_of_steps
+    opencor_sim.output_start_time = sim.initial_time
+
+    if abs(opencor_sim.number_of_steps - int(opencor_sim.number_of_steps)) > 1e-8:
+        msg = (
+            'Number of steps must be an integer, not `{}`:'
+            '\n  Initial time: {}'
+            '\n  Output start time: {}'
+            '\n  Output end time: {}'
+            '\n  Number of steps (output start - end time) time: {}'
+        ).format(opencor_sim.number_of_steps, sim.initial_time, sim.output_start_time, sim.output_end_time, sim.number_of_steps)
         raise NotImplementedError(msg)
+    else:
+        opencor_sim.number_of_steps = int(opencor_sim.number_of_steps)
 
     # check that OpenCOR can execute the request algorithm (or a similar one)
-    opencor_task = copy.deepcopy(task)
     opencor_task.simulation.algorithm = get_opencor_algorithm(opencor_task.simulation.algorithm)
 
     return opencor_task, opencor_variable_names
@@ -358,12 +374,13 @@ def validate_opencor_simulation(sim):
         raise ValueError('The task does not describe a valid simulation.')
 
 
-def get_results_from_opencor_simulation(opencor_sim, sed_variables, opencor_variable_names):
+def get_results_from_opencor_simulation(opencor_sim, sed_task, sed_variables, opencor_variable_names):
     """ Get the results of SED variables from an OpenCOR simulation
 
     Args:
         opencor_sim (:obj:`PythonQt.private.SimulationSupport.Simulation`): OpenCOR simulation
-        variables (:obj:`list` of :obj:`Variable`): SED variables
+        sed_task (:obj:`Task`): requested SED task
+        sed_variables (:obj:`list` of :obj:`Variable`): SED variables
         opencor_variable_names (:obj:`dict`): dictionary that maps the id of each SED variable to the name that OpenCOR uses to reference it)
 
     Returns:
@@ -382,19 +399,19 @@ def get_results_from_opencor_simulation(opencor_sim, sed_variables, opencor_vari
         opencor_name = opencor_variable_names[sed_variable.id]
 
         if opencor_name == opencor_voi_results.uri():
-            sed_results[sed_variable.id] = opencor_voi_results.values()
+            sed_results[sed_variable.id] = opencor_voi_results.values()[-(sed_task.simulation.number_of_steps + 1):]
 
         elif opencor_name in opencor_states_results:
-            sed_results[sed_variable.id] = opencor_states_results[opencor_name].values()
+            sed_results[sed_variable.id] = opencor_states_results[opencor_name].values()[-(sed_task.simulation.number_of_steps + 1):]
 
         elif opencor_name in opencor_rates_results:
-            sed_results[sed_variable.id] = opencor_rates_results[opencor_name].values()
+            sed_results[sed_variable.id] = opencor_rates_results[opencor_name].values()[-(sed_task.simulation.number_of_steps + 1):]
 
         elif opencor_name in opencor_constants_results:
-            sed_results[sed_variable.id] = opencor_constants_results[opencor_name].values()
+            sed_results[sed_variable.id] = opencor_constants_results[opencor_name].values()[-(sed_task.simulation.number_of_steps + 1):]
 
         elif opencor_name in opencor_algebraic_results:
-            sed_results[sed_variable.id] = opencor_algebraic_results[opencor_name].values()
+            sed_results[sed_variable.id] = opencor_algebraic_results[opencor_name].values()[-(sed_task.simulation.number_of_steps + 1):]
 
         else:
             invalid_variables.append('{}: {}'.format(sed_variable.id, sed_variable.target))

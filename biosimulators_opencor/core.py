@@ -89,7 +89,7 @@ def exec_sed_task(sed_task, sed_variables, log=None):
         raise RuntimeError('OpenCOR failed unexpectedly.')
 
     # collect the results of the simulation
-    variable_results = get_results_from_opencor_simulation(opencor_sim, sed_variables, opencor_variable_names)
+    variable_results = get_results_from_opencor_simulation(opencor_sim, sed_task, sed_variables, opencor_variable_names)
 
     # log action
     log_opencor_execution(opencor_sed_task, log)

@@ -150,7 +150,11 @@ class TestCase(unittest.TestCase):
 
         task, variables = self._get_simulation()
         task.simulation.output_start_time = 5.
-        with self.assertRaisesRegex(NotImplementedError, 'must be the equal'):
+        utils.validate_simulation(task, variables)
+
+        task, variables = self._get_simulation()
+        task.simulation.output_start_time = 5.1
+        with self.assertRaisesRegex(NotImplementedError, 'Number of steps must be an integer'):
             utils.validate_simulation(task, variables)
 
         task, variables = self._get_simulation()
@@ -250,14 +254,18 @@ class TestCase(unittest.TestCase):
     def test_get_results_from_opencor_simulation(self):
         filename = os.path.abspath(os.path.join(os.path.dirname(__file__), 'fixtures', 'lorenz.sedml'))
         task, variables = self._get_simulation()
-        variable_names = utils.validate_variable_xpaths(variables, task.model.source)
         sim = task.simulation
+        sim.initial_time = 0.
+        sim.output_start_time = 0.
+        sim.output_end_time = 50.
+        sim.number_of_steps = 50000
+        variable_names = utils.validate_variable_xpaths(variables, task.model.source)        
         opencor_sim = opencor.open_simulation(filename)
         opencor_sim.run()
-        results = utils.get_results_from_opencor_simulation(opencor_sim, variables, variable_names)
-        numpy.testing.assert_allclose(results['t'], numpy.linspace(0, 50, 50000 + 1))
+        results = utils.get_results_from_opencor_simulation(opencor_sim, task, variables, variable_names)
+        numpy.testing.assert_allclose(results['t'], numpy.linspace(sim.initial_time, sim.output_end_time, sim.number_of_steps + 1))
         for result in results.values():
-            self.assertEqual(result.shape, (50000 + 1,))
+            self.assertEqual(result.shape, (sim.number_of_steps + 1,))
             self.assertFalse(numpy.any(numpy.isnan(result)))
 
         # generated SED-ML file
@@ -266,7 +274,7 @@ class TestCase(unittest.TestCase):
         sim = task.simulation
         opencor_sim = utils.load_opencor_simulation(task, variables)
         opencor_sim.run()
-        results = utils.get_results_from_opencor_simulation(opencor_sim, variables, variable_names)
+        results = utils.get_results_from_opencor_simulation(opencor_sim, task, variables, variable_names)
         numpy.testing.assert_allclose(results['t'], numpy.linspace(sim.output_start_time, sim.output_end_time, sim.number_of_steps + 1))
         for result in results.values():
             self.assertEqual(result.shape, (sim.number_of_steps + 1,))
@@ -280,7 +288,7 @@ class TestCase(unittest.TestCase):
         sim = task.simulation
         opencor_sim = utils.load_opencor_simulation(task, variables)
         opencor_sim.run()
-        results = utils.get_results_from_opencor_simulation(opencor_sim, variables, variable_names)
+        results = utils.get_results_from_opencor_simulation(opencor_sim, task, variables, variable_names)
         numpy.testing.assert_allclose(results['t'], numpy.linspace(sim.output_start_time, sim.output_end_time, sim.number_of_steps + 1))
         for result in results.values():
             self.assertEqual(result.shape, (sim.number_of_steps + 1,))
@@ -295,7 +303,7 @@ class TestCase(unittest.TestCase):
         sim = task.simulation
         opencor_sim = utils.load_opencor_simulation(task, variables)
         opencor_sim.run()
-        results = utils.get_results_from_opencor_simulation(opencor_sim, variables, variable_names)
+        results = utils.get_results_from_opencor_simulation(opencor_sim, task, variables, variable_names)
         numpy.testing.assert_allclose(results['t'], numpy.linspace(sim.output_start_time, sim.output_end_time, sim.number_of_steps + 1))
         for result in results.values():
             self.assertEqual(result.shape, (sim.number_of_steps + 1,))
@@ -308,7 +316,7 @@ class TestCase(unittest.TestCase):
         opencor_sim.run()
         variable_names['x'] = 'main/undefined'
         with self.assertRaisesRegex(ValueError, 'must be a valid observable'):
-            utils.get_results_from_opencor_simulation(opencor_sim, variables, variable_names)
+            utils.get_results_from_opencor_simulation(opencor_sim, task, variables, variable_names)
 
     def _get_simulation(self):
         model_source = os.path.abspath(os.path.join(os.path.dirname(__file__), 'fixtures', 'lorenz.cellml'))
