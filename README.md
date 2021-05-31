@@ -14,13 +14,43 @@ A simple web application and web service for using OpenCOR to execute COMBINE/OM
 
 ## Installation
 
-### Install Python package
-1. Download OpenCOR from https://opencor.ws/downloads/index.html and install it
-2. Add the root directory for OpenCOR to your system path
-3. Install this packge
+### Install Python package and command-line application
 
+1. Install the requirements for OpenCOR:
+
+   ```sh
+   apt-get install -y \
+       curl \
+       libpulse-mainloop-glib0 \
+       libx11-6 \
+       libxext6 \
+       libxslt1.1 \
+       sqlite3
    ```
-   pip install biosimulators-opencor
+
+2. Install [OpenCOR](https://opencor.ws/downloads/index.html):
+
+   ```sh
+   url=https://opencor.ws/downloads/snapshots/2021-05-19/OpenCOR-2021-05-19-Linux.tar.gz
+   curl $url | tar -xz --directory=/opt/
+   ```
+
+3. Add OpenCOR to your system path:
+
+   ```sh
+   export PATH=/opt/OpenCOR-2021-05-19-Linux:$PATH
+   ```
+
+4. Install pip for this version of Python:
+
+   ```sh
+   curl https://bootstrap.pypa.io/get-pip.py | OpenCOR -c PythonShell
+   ```
+
+5. Use pip to install this package:
+
+   ```sh
+   /opt/OpenCOR-2021-05-19-Linux/python/bin/python -m pip install biosimulators-opencor
    ```
 
 ### Install Docker image

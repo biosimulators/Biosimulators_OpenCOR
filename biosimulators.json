@@ -1,7 +1,7 @@
 {
   "id": "opencor",
   "name": "OpenCOR",
-  "version": "0.6",
+  "version": "2021-05-19",
   "description": "Open source cross-platform modelling environment",
   "urls": [
     {
@@ -10,7 +10,7 @@
     }
   ],
   "image": {
-    "url": "ghcr.io/biosimulators/biosimulators_opencor/opencor:0.6",
+    "url": "ghcr.io/biosimulators/biosimulators_opencor/opencor:2021-05-19",
     "format": {
       "namespace": "EDAM",
       "id": "format_3973",
@@ -764,8 +764,8 @@
           ]
         },
         {
-          "name": "Kisao0000480",
-          "id": "Kisao0000480",
+          "name": "Lower half-bandwidth",
+          "id": "LowerHalfBandwidthId",
           "type": "integer",
           "value": "0",
           "recommendedRange": null,

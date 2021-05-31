@@ -3,14 +3,35 @@ Installation instructions
 
 BioSimulators-OpenCOR is available as a command-line program and as a command-line program encapsulated into a Docker image.
 
-Command-line program
---------------------
+Python Package and command-line program
+---------------------------------------
 
-After installing `Python <https://www.python.org/downloads/>`_ (>= 3.7) and `pip <https://pip.pypa.io/>`_, run the following command to install BioSimulators-OpenCOR:
+1. Install the requirements for OpenCOR::
 
-.. code-block:: text
+    apt-get install -y \
+        curl \
+        libpulse-mainloop-glib0 \
+        libx11-6 \
+        libxext6 \
+        libxslt1.1 \
+        sqlite3
 
-    pip install biosimulators-opencor
+2. Install `OpenCOR <https://opencor.ws/downloads/index.html>`_::
+
+    url=https://opencor.ws/downloads/snapshots/2021-05-19/OpenCOR-2021-05-19-Linux.tar.gz
+    curl $url | tar -xz --directory=/opt/
+
+3. Add OpenCOR to your system path::
+
+    export PATH=/opt/OpenCOR-2021-05-19-Linux:$PATH
+
+4. Install pip for this version of Python::
+
+    curl https://bootstrap.pypa.io/get-pip.py | OpenCOR -c PythonShell
+
+5. Use pip to install this package::
+
+    /opt/OpenCOR-2021-05-19-Linux/python/bin/python -m pip install biosimulators-opencor
 
 
 Docker image with a command-line entrypoint

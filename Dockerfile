@@ -1,8 +1,9 @@
-# Base OS
-FROM opencor/opencor
-
+# VERSION
 ARG VERSION=0.0.1
-ARG SIMULATOR_VERSION="0.6"
+ARG SIMULATOR_VERSION="2021-05-19"
+
+# Base OS
+FROM opencor/opencor:$SIMULATOR_VERSION
 
 # metadata
 LABEL \
@@ -29,18 +30,22 @@ LABEL \
     maintainer="BioSimulators Team <info@biosimulators.org>"
 
 # Add Python to system path
-ENV PATH=/home/opencor/OpenCOR/python/bin:$PATH
-
-# Install pip
-RUN curl https://bootstrap.pypa.io/get-pip.py | python
+ENV PYTHON="OpenCOR -c PythonShell" \
+    PIP="${OPENCORDIR}/python/bin/python -m pip"
 
 # Copy code for command-line interface into image and install it
-COPY . /root/Biosimulators_OpenCOR
-RUN pip install /root/Biosimulators_OpenCOR \
-    && rm -rf /root/Biosimulators_OpenCOR
+COPY . /tmp/Biosimulators_OpenCOR
+RUN $PIP install /tmp/Biosimulators_OpenCOR \
+    && rm -rf /tmp/Biosimulators_OpenCOR
 ENV VERBOSE=0 \
     MPLBACKEND=PDF
 
 # Entrypoint
-ENTRYPOINT ["biosimulators-opencor"]
+# - The working directory must be set to something other than the default because the default includes a Python file with the same
+#   name as the opencor Python module, which will cause the Python interpreter to fail to find the OpenCOR module
+# - ugo+w permissions to `${OPENCORDIR}/python/bin` are needed because the OpenCOR Python pluging dynamically generates these files
+RUN mkdir ${HOMEDIR}/Biosimulators_OpenCOR \
+    && chmod -R ugo+w ${OPENCORDIR}/python/bin
+WORKDIR ${HOMEDIR}/Biosimulators_OpenCOR
+ENTRYPOINT ["pythonshell", "-m", "biosimulators_opencor"]
 CMD []

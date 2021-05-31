@@ -9,6 +9,9 @@ import datetime
 import os
 import sys
 
+from unittest import mock
+sys.modules['opencor'] = mock.Mock()
+
 # -- Path setup --------------------------------------------------------------
 
 # If extensions (or modules to document with autodoc) are in another directory,

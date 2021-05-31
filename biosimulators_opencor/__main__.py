@@ -7,15 +7,19 @@
 """
 
 from ._version import __version__
+from .utils import get_opencor_version
 from .core import exec_sedml_docs_in_combine_archive
 from biosimulators_utils.simulator.cli import build_cli
-import opencor
 
 App = build_cli('opencor', __version__,
-                'OpenCOR', '0.6', 'https://opencor.ws',
+                'OpenCOR', get_opencor_version(), 'https://opencor.ws',
                 exec_sedml_docs_in_combine_archive)
 
 
 def main():
     with App() as app:
         app.run()
+
+
+if __name__ == "__main__":
+    main()

@@ -7,8 +7,8 @@ This package is released under the `MIT License <https://github.com/biosimulator
 
 Development team
 ----------------
-This package was developed by the `Karr Lab <https://www.karrlab.org>`_ at the Icahn School of Medicine at Mount Sinai and the `Center for Reproducible Biomedical Modeling <https://reproduciblebiomodels.org/>`_. OpenCOR was developed by the `Alan Garny <https://opencor.ws/team.html>`_ at the University of Auckland.
+This package was developed by the `Karr Lab <https://www.karrlab.org>`_ at the Icahn School of Medicine at Mount Sinai and the `Center for Reproducible Biomedical Modeling <https://reproduciblebiomodels.org/>`_. OpenCOR was developed by `Alan Garny <https://opencor.ws/team.html>`_ at the University of Auckland.
 
 Questions and comments
 -------------------------
-Please contact the `BioSimulators Team <mailto:info@biosimulators.org>`_ with any questions or comments about the command-line program or Docker image. Please contact the `OpenCOR Team <https://opencor.ws/contactUs.htmlp>`_ with any questions or comments about OpenCOR.
+Please contact the `BioSimulators Team <mailto:info@biosimulators.org>`_ with any questions or comments about the command-line program or Docker image. Please contact the `OpenCOR Team <https://opencor.ws/contactUs.html>`_ with any questions or comments about OpenCOR.
