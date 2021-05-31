@@ -137,7 +137,7 @@ jobs:
       - name: Run the tests in the Docker image
         run: |
           cwd=$(pwd)
-          docker run -it --rm \
+          docker run --rm \
             --mount type=bind,source=$cwd,target=/home/opencor/Biosimulators_OpenCOR \
             --entrypoint bash \
             --workdir /home/opencor/Biosimulators_OpenCOR \
