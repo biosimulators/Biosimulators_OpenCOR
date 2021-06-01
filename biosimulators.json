@@ -193,11 +193,11 @@
         {
           "name": "Iteration type",
           "id": "IterationTypeId",
-          "type": "string",
-          "value": "Newton",
+          "type": "kisaoId",
+          "value": "KISAO_0000408",
           "recommendedRange": [
-            "Newton",
-            "Functional"
+            "KISAO_0000408",
+            "KISAO_0000632"
           ],
           "kisaoId": {
             "namespace": "KISAO",
@@ -211,15 +211,15 @@
         {
           "name": "Linear solver",
           "id": "LinearSolverId",
-          "type": "string",
-          "value": "Dense",
+          "type": "kisaoId",
+          "value": "KISAO_0000625",
           "recommendedRange": [
-            "Dense",
-            "Banded",
-            "Diagonal",
-            "GMRES",
-            "BiCGStab",
-            "TFQMR"
+            "KISAO_0000625",
+            "KISAO_0000626",
+            "KISAO_0000627",
+            "KISAO_0000353",
+            "KISAO_0000392",
+            "KISAO_0000396"
           ],
           "kisaoId": {
             "namespace": "KISAO",
@@ -233,11 +233,11 @@
         {
           "name": "Preconditioner",
           "id": "PreconditionerId",
-          "type": "string",
-          "value": "Banded",
+          "type": "kisaoId",
+          "value": "KISAO_0000626",
           "recommendedRange": [
-            "Banded",
-            "None"
+            "KISAO_0000626",
+            "KISAO_0000629"
           ],
           "kisaoId": {
             "namespace": "KISAO",
@@ -730,14 +730,14 @@
         {
           "name": "LinearSolverId",
           "id": "LinearSolverId",
-          "type": "string",
-          "value": "Dense",
+          "type": "kisaoId",
+          "value": "KISAO_0000625",
           "recommendedRange": [
-            "Dense",
-            "Banded",
-            "GMRES",
-            "BiCGStab",
-            "TFQMR"
+            "KISAO_0000625",
+            "KISAO_0000626",
+            "KISAO_0000353",
+            "KISAO_0000392",
+            "KISAO_0000396"
           ],
           "kisaoId": {
             "namespace": "KISAO",

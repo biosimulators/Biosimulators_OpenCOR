@@ -17,10 +17,10 @@ import unittest
 class DataModelTestCase(unittest.TestCase):
     def test(self):
         self.assertEqual(data_model.CvodeIntegrationMethod.KISAO_0000288.value, 'BDF')
-        self.assertEqual(data_model.CvodeIterationType.Newton.value, 'Newton')
-        self.assertEqual(data_model.CvodeLinearSolver.Dense.value, 'Dense')
-        self.assertEqual(data_model.CvodePreconditioner['None'].value, 'None')
-        self.assertEqual(data_model.KinsolLinearSolver.Dense.value, 'Dense')
+        self.assertEqual(data_model.CvodeIterationType.KISAO_0000408.value, 'Newton')
+        self.assertEqual(data_model.CvodeLinearSolver.KISAO_0000625.value, 'Dense')
+        self.assertEqual(data_model.CvodePreconditioner.KISAO_0000629.value, 'None')
+        self.assertEqual(data_model.KinsolLinearSolver.KISAO_0000625.value, 'Dense')
         self.assertEqual(data_model.KISAO_ALGORITHM_MAP['KISAO_0000019']['kisao_id'], 'KISAO_0000019')
 
     def test_consistent_with_specs(self):
@@ -44,13 +44,7 @@ class DataModelTestCase(unittest.TestCase):
 
                 if param_props['type'] == ValueType.float and param_specs['value'] is None and param_props['default'] == 0:
                     pass
-                elif param_specs['type'] == 'kisaoId' and param_specs['value'] == 'KISAO_0000288' and param_props['default'] == 'BDF':
-                    pass
-                elif (
-                    param_specs['type'] == 'kisaoId'
-                    and param_specs['value'] == 'KISAO_0000280'
-                    and param_props['default'] == 'Adams-Moulton'
-                ):
+                elif param_specs['type'] == 'kisaoId' and param_specs['value'] == param_props['default']:
                     pass
                 else:
                     self.assertEqual(param_props['default'], parse_value(param_specs['value'], param_props['type']))
