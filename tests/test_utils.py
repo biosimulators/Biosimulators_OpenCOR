@@ -56,6 +56,10 @@ class TestCase(unittest.TestCase):
                                                            param_specs['KISAO_0000475']['type'],
                                                            CvodeIntegrationMethod),
                          (True, 'BDF'))
+        self.assertEqual(utils.get_opencor_parameter_value('BDF',
+                                                           param_specs['KISAO_0000475']['type'],
+                                                           CvodeIntegrationMethod),
+                         (True, 'BDF'))
         self.assertEqual(utils.get_opencor_parameter_value(
             'x', param_specs['KISAO_0000475']['type'], CvodeIntegrationMethod), (False, None))
 

@@ -1,3 +1,5 @@
 biosimulators_utils[cellml,logging] >= 0.1.77
+kisao >= 2.15.3
 lxml
 numpy
+# opencor

@@ -254,11 +254,17 @@ def get_opencor_parameter_value(value, value_type, enum_cls=None):
         return False, None
 
     if enum_cls:
-        if value in enum_cls.__members__:
+        try:
             return True, enum_cls[value].value
+        except KeyError:
+            pass
 
-        else:
-            return False, None
+        try:
+            return True, enum_cls(value).value
+        except ValueError:
+            pass
+
+        return False, None
 
     else:
         return True, value
