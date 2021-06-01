@@ -260,6 +260,11 @@ def get_opencor_parameter_value(value, value_type, enum_cls=None):
             pass
 
         try:
+            return True, enum_cls[value.replace('KISAO:', 'KISAO_')].value
+        except KeyError:
+            pass
+
+        try:
             return True, enum_cls(value).value
         except ValueError:
             pass

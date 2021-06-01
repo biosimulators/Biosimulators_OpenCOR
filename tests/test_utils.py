@@ -46,6 +46,14 @@ class TestCase(unittest.TestCase):
         self.assertEqual(utils.get_opencor_parameter_value('1.0', param_specs['KISAO_0000415']['type'], None), (False, None))
         self.assertEqual(utils.get_opencor_parameter_value('x', param_specs['KISAO_0000415']['type'], None), (False, None))
 
+        self.assertEqual(utils.get_opencor_parameter_value('KISAO_0000408',
+                                                           param_specs['KISAO_0000476']['type'],
+                                                           CvodeIterationType),
+                         (True, 'Newton'))
+        self.assertEqual(utils.get_opencor_parameter_value('KISAO:0000408',
+                                                           param_specs['KISAO_0000476']['type'],
+                                                           CvodeIterationType),
+                         (True, 'Newton'))
         self.assertEqual(utils.get_opencor_parameter_value('Newton',
                                                            param_specs['KISAO_0000476']['type'],
                                                            CvodeIterationType),
@@ -53,6 +61,10 @@ class TestCase(unittest.TestCase):
         self.assertEqual(utils.get_opencor_parameter_value('x', param_specs['KISAO_0000476']['type'], CvodeIterationType), (False, None))
 
         self.assertEqual(utils.get_opencor_parameter_value('KISAO_0000288',
+                                                           param_specs['KISAO_0000475']['type'],
+                                                           CvodeIntegrationMethod),
+                         (True, 'BDF'))
+        self.assertEqual(utils.get_opencor_parameter_value('KISAO:0000288',
                                                            param_specs['KISAO_0000475']['type'],
                                                            CvodeIntegrationMethod),
                          (True, 'BDF'))

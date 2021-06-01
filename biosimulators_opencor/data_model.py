@@ -28,37 +28,33 @@ class CvodeIntegrationMethod(str, enum.Enum):
 
 class CvodeIterationType(str, enum.Enum):
     """ CVODE iteration type  """
-    Newton = 'Newton'
-    Functional = 'Functional'
+    KISAO_0000408 = 'Newton'
+    KISAO_0000632 = 'Functional'  # only suitable for non-stiff systems
 
 
 class CvodeLinearSolver(str, enum.Enum):
     """ CVODE linear solver """
-    Dense = "Dense"
-    Banded = "Banded"
-    Diagonal = "Diagonal"
-    GMRES = "GMRES"
-    BiCGStab = "BiCGStab"
-    TFQMR = "TFQMR"
+    KISAO_0000625 = "Dense"  # dense direct solvers
+    KISAO_0000626 = "Banded"  # band direct solvers
+    KISAO_0000627 = "Diagonal"  # diagonal approximate Jacobian solver
+    KISAO_0000353 = "GMRES"  # generalized minimal residual method
+    KISAO_0000392 = "BiCGStab"  # Biconjugate gradient stabilized method
+    KISAO_0000396 = "TFQMR"  # transpose-free quasi-minimal residual algorithm
 
 
-CvodePreconditioner = enum.Enum('CvodePreconditioner',
-                                [
-                                    ('Banded', 'Banded'),
-                                    ('None', 'None'),
-                                ],
-                                type=str,
-                                )
-""" CVODE preconditioner """
+class CvodePreconditioner(str, enum.Enum):
+    """ CVODE preconditioner """
+    KISAO_0000626 = 'Banded'
+    KISAO_0000629 = 'None'
 
 
 class KinsolLinearSolver(str, enum.Enum):
     """ KINSOL linear solver """
-    Dense = "Dense"
-    Banded = "Banded"
-    GMRES = "GMRES"
-    BiCGStab = "BiCGStab"
-    TFQMR = "TFQMR"
+    KISAO_0000625 = "Dense"
+    KISAO_0000626 = "Banded"
+    KISAO_0000353 = "GMRES"
+    KISAO_0000392 = "BiCGStab"
+    KISAO_0000396 = "TFQMR"
 
 
 KISAO_ALGORITHM_MAP = collections.OrderedDict([
@@ -89,21 +85,21 @@ KISAO_ALGORITHM_MAP = collections.OrderedDict([
                 'id': 'IterationTypeId',
                 'name': 'iteration type',
                 'type': ValueType.string,
-                'default': CvodeIterationType.Newton.value,
+                'default': CvodeIterationType.KISAO_0000408.value,
                 'enum': CvodeIterationType,
             },
             'KISAO_0000477': {
                 'id': 'LinearSolverId',
                 'name': 'linear solver',
                 'type': ValueType.string,
-                'default': CvodeLinearSolver.Dense.value,
+                'default': CvodeLinearSolver.KISAO_0000625.value,
                 'enum': CvodeLinearSolver,
             },
             'KISAO_0000478': {
                 'id': 'PreconditionerId',
                 'name': 'preconditioner',
                 'type': ValueType.string,
-                'default': CvodePreconditioner.Banded.value,
+                'default': CvodePreconditioner.KISAO_0000626.value,
                 'enum': CvodePreconditioner,
             },
             'KISAO_0000479': {
@@ -205,7 +201,7 @@ KISAO_ALGORITHM_MAP = collections.OrderedDict([
                 'id': 'LinearSolverId',
                 'name': 'linear solver',
                 'type': ValueType.string,
-                'default': KinsolLinearSolver.Dense.value,
+                'default': KinsolLinearSolver.KISAO_0000625.value,
                 "enum": KinsolLinearSolver,
             },
             'KISAO_0000479': {
