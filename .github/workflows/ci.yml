@@ -117,13 +117,29 @@ jobs:
             --username ${{ secrets.DOCKER_HUB_USERNAME }} \
             --password ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      - name: Build OpenCOR Docker image
+      - name: Clone the repo for the OpenCOR Docker image
         run: |
-          git clone https://github.com/opencor/docker ~/opencor-docker
-          cd ~/opencor-docker
-          docker build \
-            --tag opencor/opencor:${{ steps.get-docker-image-tag.outputs.simulatorVersion }} \
-            .
+          git clone \
+            --depth 1 \
+            --branch ${{ steps.get-docker-image-tag.outputs.simulatorVersion }} \
+            https://github.com/opencor/docker
+
+      - name: Build OpenCOR Docker image
+        uses: whoan/docker-build-with-cache-action@v5
+        with:
+          registry: ${{ steps.get-docker-image-tag.outputs.dockerRegistry }}
+          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          password: "${{ secrets.DOCKER_REGISTRY_TOKEN }}"
+          image_name: biosimulators/biosimulators_opencor/opencor_base
+          image_tag: ${{ steps.get-docker-image-tag.outputs.simulatorVersion }}
+          dockerfile: Dockerfile
+          context: /home/runner/opencor-docker
+
+      - name: Label OpenCOR Docker image
+        run: |
+          docker image tag \
+            ${{ steps.get-docker-image-tag.outputs.dockerRegistry }}/biosimulators/biosimulators_opencor/opencor_base:${{ steps.get-docker-image-tag.outputs.simulatorVersion }} \
+            opencor/opencor:${{ steps.get-docker-image-tag.outputs.simulatorVersion }}
 
       - name: Build Docker image
         run: |
