@@ -123,8 +123,7 @@ jobs:
             --depth 1 \
             --branch ${{ steps.get-docker-image-tag.outputs.simulatorVersion }} \
             https://github.com/opencor/docker \
-            /home/runner/opencor-docker
-          ls /home/runner/opencor-docker
+            opencor-docker
 
       - name: Build OpenCOR Docker image
         uses: whoan/docker-build-with-cache-action@v5
@@ -135,7 +134,7 @@ jobs:
           image_name: biosimulators/biosimulators_opencor/opencor_base
           image_tag: ${{ steps.get-docker-image-tag.outputs.simulatorVersion }}
           dockerfile: Dockerfile
-          context: /home/runner/opencor-docker
+          context: opencor-docker
 
       - name: Label OpenCOR Docker image
         run: |
