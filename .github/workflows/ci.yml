@@ -117,6 +117,14 @@ jobs:
             --username ${{ secrets.DOCKER_HUB_USERNAME }} \
             --password ${{ secrets.DOCKER_HUB_TOKEN }}
 
+      - name: Build OpenCOR Docker image
+        run: |
+          git clone https://github.com/opencor/docker ~/opencor-docker
+          cd ~/opencor-docker
+          docker build \
+            --tag opencor/opencor:${{ steps.get-docker-image-tag.outputs.simulatorVersion }} \
+            .
+
       - name: Build Docker image
         run: |
           REVISION=$(git rev-parse HEAD)
