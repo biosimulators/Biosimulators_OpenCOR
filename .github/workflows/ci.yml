@@ -123,7 +123,8 @@ jobs:
             --depth 1 \
             --branch ${{ steps.get-docker-image-tag.outputs.simulatorVersion }} \
             https://github.com/opencor/docker \
-            ~/opencor-docker
+            /home/runner/opencor-docker
+          ls /home/runner/opencor-docker
 
       - name: Build OpenCOR Docker image
         uses: whoan/docker-build-with-cache-action@v5
