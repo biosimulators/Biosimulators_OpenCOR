@@ -167,15 +167,13 @@ class TestCase(unittest.TestCase):
         with mock.patch.dict('sys.modules', libcellml=utils.get_mock_libcellml()):
             SedmlSimulationWriter().run(doc, sim_filename)
 
-        updated = datetime.datetime(2020, 1, 2, 1, 2, 3, tzinfo=dateutil.tz.tzutc())
         archive = combine_data_model.CombineArchive(
             contents=[
                 combine_data_model.CombineArchiveContent(
-                    'model1.cellml', combine_data_model.CombineArchiveContentFormat.CellML.value, updated=updated),
+                    'model1.cellml', combine_data_model.CombineArchiveContentFormat.CellML.value),
                 combine_data_model.CombineArchiveContent(
-                    'simulation.sedml', combine_data_model.CombineArchiveContentFormat.SED_ML.value, updated=updated),
+                    'simulation.sedml', combine_data_model.CombineArchiveContentFormat.SED_ML.value),
             ],
-            updated=updated,
         )
         archive_filename = os.path.join(self.dirname, 'archive.omex')
         CombineArchiveWriter().run(archive, archive_dirname, archive_filename)
