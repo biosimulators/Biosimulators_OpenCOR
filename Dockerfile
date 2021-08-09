@@ -33,6 +33,12 @@ LABEL \
 ENV PYTHON="OpenCOR -c PythonShell" \
     PIP="${OPENCORDIR}/python/bin/python -m pip"
 
+# setup matplotlib
+RUN mkdir -p /.config/matplotlib \
+    && mkdir -p /.cache/matplotlib \
+    && chmod ugo+rw /.config/matplotlib \
+    && chmod ugo+rw /.cache/matplotlib
+
 # Copy code for command-line interface into image and install it
 COPY . /tmp/Biosimulators_OpenCOR
 RUN $PIP install /tmp/Biosimulators_OpenCOR \

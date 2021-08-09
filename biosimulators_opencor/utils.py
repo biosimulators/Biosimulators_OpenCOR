@@ -137,6 +137,10 @@ def validate_variable_xpaths(sed_variables, model_filename):
 
     opencor_variable_names = {}
     for sed_variable in sed_variables:
+        if not sed_variable.target:
+            msg = 'Symbols are not supported.'
+            raise NotImplementedError(msg)
+
         namespaces = copy.copy(sed_variable.target_namespaces)
         namespaces.pop(None, None)
         xml_objs = model_etree.xpath(sed_variable.target, namespaces=namespaces)
