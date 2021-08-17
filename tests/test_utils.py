@@ -1,3 +1,4 @@
+from biosimulators_opencor import get_simulator_version
 from biosimulators_opencor import utils
 from biosimulators_opencor.data_model import KISAO_ALGORITHM_MAP, CvodeIterationType, CvodeIntegrationMethod
 from biosimulators_utils.log.data_model import TaskLog
@@ -24,15 +25,15 @@ class TestCase(unittest.TestCase):
         'cellml': 'http://www.cellml.org/cellml/1.0#',
     }
 
-    def test_get_opencor_version(self):
-        version = utils.get_opencor_version()
+    def test_get_simulator_version(self):
+        version = get_simulator_version()
         self.assertIsInstance(version, str)
         self.assertNotEqual(version, '')
         self.assertNotIn('\n', version)
 
         with self.assertRaises(RuntimeError):
             with mock.patch('subprocess.run', return_value=mock.Mock(returncode=1, stderr=mock.Mock(decode=lambda: 'error'))):
-                utils.get_opencor_version()
+                get_simulator_version()
 
     def test_get_opencor_parameter_value(self):
         param_specs = KISAO_ALGORITHM_MAP['KISAO_0000019']['parameters']

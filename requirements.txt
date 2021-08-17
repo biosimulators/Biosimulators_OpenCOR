@@ -1,4 +1,4 @@
-biosimulators_utils[cellml,logging] >= 0.1.102
+biosimulators_utils[cellml,logging] >= 0.1.104
 kisao >= 2.23
 lxml
 numpy

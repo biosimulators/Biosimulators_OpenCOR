@@ -7,6 +7,7 @@
 """
 
 from .data_model import KISAO_ALGORITHM_MAP
+from biosimulators_utils.config import get_config  # noqa: F401
 from biosimulators_utils.data_model import ValueType  # noqa: F401
 from biosimulators_utils.log.data_model import TaskLog  # noqa: F401
 from biosimulators_utils.report.data_model import VariableResults  # noqa: F401
@@ -25,12 +26,10 @@ import copy
 import lxml.etree
 import opencor
 import os
-import subprocess
 import tempfile
 
 
 __all__ = [
-    'get_opencor_version',
     'validate_simulation',
     'validate_variable_xpaths',
     'get_opencor_algorithm',
@@ -43,24 +42,6 @@ __all__ = [
     'log_opencor_execution',
     'get_mock_libcellml',
 ]
-
-
-def get_opencor_version():
-    """ Get the version of OpenCOR
-
-    Returns:
-        :obj:`str`: version of OpenCOR
-    """
-    result = subprocess.run(['OpenCOR', '--version'],
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE,
-                            check=False)
-
-    if result.returncode != 0:
-        raise RuntimeError('The version of OpenCOR could not be retrieved:\n\n  {}'.format(
-            result.stderr.decode().strip().replace('\n', '\n  ')))
-
-    return result.stdout.decode().strip().replace('OpenCOR ', '')
 
 
 def validate_simulation(task, variables):
@@ -76,22 +57,26 @@ def validate_simulation(task, variables):
             :obj:`Task`: possibly alternate task that OpenCOR should execute
             :obj:`dict`: dictionary that maps the id of each SED variable to the name that OpenCOR uses to reference it
     """
+    config = get_config()
     model = task.model
     sim = task.simulation
-    raise_errors_warnings(validation.validate_task(task),
-                          error_summary='Task `{}` is invalid.'.format(task.id))
-    raise_errors_warnings(validation.validate_model_language(model.language, ModelLanguage.CellML),
-                          error_summary='Language for model `{}` is not supported.'.format(model.id))
-    raise_errors_warnings(validation.validate_model_change_types(model.changes, ()),
-                          error_summary='Changes for model `{}` are not supported.'.format(model.id))
-    raise_errors_warnings(*validation.validate_model_changes(model),
-                          error_summary='Changes for model `{}` are invalid.'.format(model.id))
-    raise_errors_warnings(validation.validate_simulation_type(sim, (UniformTimeCourseSimulation, )),
-                          error_summary='{} `{}` is not supported.'.format(sim.__class__.__name__, sim.id))
-    raise_errors_warnings(*validation.validate_simulation(sim),
-                          error_summary='Simulation `{}` is invalid.'.format(sim.id))
-    raise_errors_warnings(*validation.validate_data_generator_variables(variables),
-                          error_summary='Data generator variables for task `{}` are invalid.'.format(task.id))
+
+    if config.VALIDATE_SEDML:
+        raise_errors_warnings(validation.validate_task(task),
+                              error_summary='Task `{}` is invalid.'.format(task.id))
+        raise_errors_warnings(validation.validate_model_language(model.language, ModelLanguage.CellML),
+                              error_summary='Language for model `{}` is not supported.'.format(model.id))
+        raise_errors_warnings(validation.validate_model_change_types(model.changes, ()),
+                              error_summary='Changes for model `{}` are not supported.'.format(model.id))
+        raise_errors_warnings(*validation.validate_model_changes(model),
+                              error_summary='Changes for model `{}` are invalid.'.format(model.id))
+        raise_errors_warnings(validation.validate_simulation_type(sim, (UniformTimeCourseSimulation, )),
+                              error_summary='{} `{}` is not supported.'.format(sim.__class__.__name__, sim.id))
+        raise_errors_warnings(*validation.validate_simulation(sim),
+                              error_summary='Simulation `{}` is invalid.'.format(sim.id))
+        raise_errors_warnings(*validation.validate_data_generator_variables(variables),
+                              error_summary='Data generator variables for task `{}` are invalid.'.format(task.id))
+
     opencor_variable_names = validate_variable_xpaths(variables, model.source)
 
     opencor_task = copy.deepcopy(task)
