@@ -1,7 +1,7 @@
 {
   "id": "opencor",
   "name": "OpenCOR",
-  "version": "2021-07-09",
+  "version": "2021-08-19",
   "description": "Open source cross-platform modelling environment",
   "urls": [
     {
@@ -10,7 +10,7 @@
     }
   ],
   "image": {
-    "url": "ghcr.io/biosimulators/biosimulators_opencor/opencor:2021-07-09",
+    "url": "ghcr.io/biosimulators/biosimulators_opencor/opencor:2021-08-19",
     "format": {
       "namespace": "EDAM",
       "id": "format_3973",
