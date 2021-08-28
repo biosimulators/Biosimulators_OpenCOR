@@ -95,7 +95,7 @@ docker run \
 ```
 
 ## Documentation
-Documentation is available at https://biosimulators.github.io/Biosimulators_OpenCOR/.
+Documentation is available at https://docs.biosimulators.org/Biosimulators_OpenCOR/.
 
 ## License
 This package is released under the [MIT](LICENSE).
