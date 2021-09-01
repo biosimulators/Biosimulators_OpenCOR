@@ -19,6 +19,10 @@
     },
     "operatingSystemType": "Linux"
   },
+  "pythonApi": {
+    "package": "biosimulators-opencor",
+    "module": "biosimulators_opencor"
+  },
   "authors": [
     {
       "firstName": "Alan",
@@ -56,7 +60,11 @@
     }
   ],
   "references": {
-    "identifiers": [],
+    "identifiers": [{
+            "namespace": "pypi",
+            "id": "biosimulators-opencor",
+            "url": "https://pypi.org/project/biosimulators-opencor/"
+          }],
     "citations": [
       {
         "title": "OpenCOR: a modular and interoperable approach to computational biology",

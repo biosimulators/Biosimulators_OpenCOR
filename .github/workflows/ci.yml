@@ -168,10 +168,9 @@ jobs:
             --workdir /home/opencor/Biosimulators_OpenCOR \
             ghcr.io/biosimulators/biosimulators_opencor/opencor:latest \
             -c "
-              /home/opencor/OpenCOR/python/bin/python -m pip install pytest pytest-cov coverage; \
+              /home/opencor/OpenCOR/python/bin/python -m pip install pytest pytest-cov; \
               /home/opencor/OpenCOR/python/bin/python -m pip install -r tests/requirements.txt; \
               pythonshell -m pytest tests/ --cov=./ --cov-report=xml; \
-              /home/opencor/OpenCOR/python/bin/coverage html; \
               exit
             "
 

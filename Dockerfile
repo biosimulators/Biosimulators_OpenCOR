@@ -1,5 +1,5 @@
 # VERSION
-ARG VERSION=0.0.6
+ARG VERSION=0.0.7
 ARG SIMULATOR_VERSION="2021-08-19"
 
 # Base OS
@@ -32,6 +32,11 @@ LABEL \
 # Add Python to system path
 ENV PYTHON="OpenCOR -c PythonShell" \
     PIP="${OPENCORDIR}/python/bin/python -m pip"
+
+# fonts for matplotlib
+RUN apt-get update -y \
+    && apt-get install -y --no-install-recommends libfreetype6 \
+    && rm -rf /var/lib/apt/lists/*
 
 # setup matplotlib
 RUN mkdir -p /.config/matplotlib \

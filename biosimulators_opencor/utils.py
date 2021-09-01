@@ -7,7 +7,7 @@
 """
 
 from .data_model import KISAO_ALGORITHM_MAP
-from biosimulators_utils.config import get_config  # noqa: F401
+from biosimulators_utils.config import get_config, Config  # noqa: F401
 from biosimulators_utils.data_model import ValueType  # noqa: F401
 from biosimulators_utils.log.data_model import TaskLog  # noqa: F401
 from biosimulators_utils.report.data_model import VariableResults  # noqa: F401
@@ -44,12 +44,13 @@ __all__ = [
 ]
 
 
-def validate_simulation(task, variables):
+def validate_simulation(task, variables, config=None):
     """ Validate that a simulation can be executed with OpenCOR
 
     Args:
         task (:obj:`Task`): request simulation task
         variables (:obj:`list` of :obj:`Variable`): variables that should be recorded
+        config (:obj:`Config`, optional): BioSimulators common configuration
 
     Returns:
         :obj:`tuple:`:
@@ -57,7 +58,7 @@ def validate_simulation(task, variables):
             :obj:`Task`: possibly alternate task that OpenCOR should execute
             :obj:`dict`: dictionary that maps the id of each SED variable to the name that OpenCOR uses to reference it
     """
-    config = get_config()
+    config = config or get_config()
     model = task.model
     sim = task.simulation
 
@@ -102,7 +103,7 @@ def validate_simulation(task, variables):
         opencor_sim.number_of_steps = int(opencor_sim.number_of_steps)
 
     # check that OpenCOR can execute the request algorithm (or a similar one)
-    opencor_task.simulation.algorithm = get_opencor_algorithm(opencor_task.simulation.algorithm)
+    opencor_task.simulation.algorithm = get_opencor_algorithm(opencor_task.simulation.algorithm, config=config)
 
     return opencor_task, opencor_variable_names
 
@@ -163,18 +164,19 @@ def validate_variable_xpaths(sed_variables, model_filename):
     return opencor_variable_names
 
 
-def get_opencor_algorithm(requested_alg):
+def get_opencor_algorithm(requested_alg, config=None):
     """ Get a possibly alternative algorithm that OpenCOR should execute
 
     Args:
         requested_alg (:obj:`Algorithm`): requested algorithm
+        config (:obj:`Config`, optional): configuration
 
     Returns:
         :obj:`Algorithm`: possibly alternative algorithm that OpenCOR should execute
     """
     exec_alg = copy.deepcopy(requested_alg)
 
-    algorithm_substitution_policy = get_algorithm_substitution_policy()
+    algorithm_substitution_policy = get_algorithm_substitution_policy(config=config)
     exec_alg.kisao_id = get_preferred_substitute_algorithm_by_ids(
         requested_alg.kisao_id, KISAO_ALGORITHM_MAP.keys(),
         substitution_policy=algorithm_substitution_policy)
