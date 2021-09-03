@@ -14,9 +14,8 @@ from biosimulators_utils.log.data_model import CombineArchiveLog, TaskLog, Stand
 from biosimulators_utils.viz.data_model import VizFormat  # noqa: F401
 from biosimulators_utils.report.data_model import ReportFormat, VariableResults, SedDocumentResults  # noqa: F401
 from biosimulators_utils.sedml.data_model import Task, Variable  # noqa: F401
-from biosimulators_utils.sedml.exec import exec_sed_doc
+from biosimulators_utils.sedml.exec import exec_sed_doc as base_exec_sed_doc
 from unittest import mock
-import functools
 
 __all__ = [
     'exec_sedml_docs_in_combine_archive', 'exec_sed_doc', 'exec_sed_task', 'preprocess_sed_task',
@@ -43,13 +42,54 @@ def exec_sedml_docs_in_combine_archive(archive_filename, out_dir, config=None):
             * :obj:`SedDocumentResults`: results
             * :obj:`CombineArchiveLog`: log
     """
-    sed_doc_executer = functools.partial(exec_sed_doc, exec_sed_task)
-
     with mock.patch.dict('sys.modules', libcellml=get_mock_libcellml()):
-        return exec_sedml_docs_in_archive(sed_doc_executer, archive_filename, out_dir,
+        return exec_sedml_docs_in_archive(exec_sed_doc, archive_filename, out_dir,
                                           apply_xml_model_changes=True,
                                           log_level=StandardOutputErrorCapturerLevel.python,
                                           config=config)
+
+
+def exec_sed_doc(doc, working_dir, base_out_path, rel_out_path=None,
+                 apply_xml_model_changes=False,
+                 log=None, indent=0, pretty_print_modified_xml_models=False,
+                 log_level=StandardOutputErrorCapturerLevel.c, config=None):
+    """ Execute the tasks specified in a SED document and generate the specified outputs
+
+    Args:
+        doc (:obj:`SedDocument` or :obj:`str`): SED document or a path to SED-ML file which defines a SED document
+        working_dir (:obj:`str`): working directory of the SED document (path relative to which models are located)
+
+        base_out_path (:obj:`str`): path to store the outputs
+
+            * CSV: directory in which to save outputs to files
+              ``{base_out_path}/{rel_out_path}/{report.id}.csv``
+            * HDF5: directory in which to save a single HDF5 file (``{base_out_path}/reports.h5``),
+              with reports at keys ``{rel_out_path}/{report.id}`` within the HDF5 file
+
+        rel_out_path (:obj:`str`, optional): path relative to :obj:`base_out_path` to store the outputs
+        apply_xml_model_changes (:obj:`bool`, optional): if :obj:`True`, apply any model changes specified in the SED-ML file before
+            calling :obj:`task_executer`.
+        log (:obj:`SedDocumentLog`, optional): log of the document
+        indent (:obj:`int`, optional): degree to indent status messages
+        pretty_print_modified_xml_models (:obj:`bool`, optional): if :obj:`True`, pretty print modified XML models
+        log_level (:obj:`StandardOutputErrorCapturerLevel`, optional): level at which to log output
+        config (:obj:`Config`, optional): BioSimulators common configuration
+        simulator_config (:obj:`SimulatorConfig`, optional): tellurium configuration
+
+    Returns:
+        :obj:`tuple`:
+
+            * :obj:`ReportResults`: results of each report
+            * :obj:`SedDocumentLog`: log of the document
+    """
+    return base_exec_sed_doc(exec_sed_task, doc, working_dir, base_out_path,
+                             rel_out_path=rel_out_path,
+                             apply_xml_model_changes=apply_xml_model_changes,
+                             log=log,
+                             indent=indent,
+                             pretty_print_modified_xml_models=pretty_print_modified_xml_models,
+                             log_level=log_level,
+                             config=config)
 
 
 def exec_sed_task(task, variables, preprocessed_task=None, log=None, config=None):
