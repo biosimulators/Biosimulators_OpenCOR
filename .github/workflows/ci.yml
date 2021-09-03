@@ -170,7 +170,7 @@ jobs:
             -c "
               /home/opencor/OpenCOR/python/bin/python -m pip install pytest pytest-cov; \
               /home/opencor/OpenCOR/python/bin/python -m pip install -r tests/requirements.txt; \
-              pythonshell -m pytest tests/ --cov=./ --cov-report=xml; \
+              pythonshell -m pytest tests/ --cov=./biosimulators_opencor/ --cov-report=xml; \
               exit
             "
 

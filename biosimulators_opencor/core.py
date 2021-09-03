@@ -19,7 +19,7 @@ from unittest import mock
 import functools
 
 __all__ = [
-    'exec_sedml_docs_in_combine_archive', 'exec_sed_task',
+    'exec_sedml_docs_in_combine_archive', 'exec_sed_doc', 'exec_sed_task', 'preprocess_sed_task',
 ]
 
 
@@ -52,14 +52,17 @@ def exec_sedml_docs_in_combine_archive(archive_filename, out_dir, config=None):
                                           config=config)
 
 
-def exec_sed_task(sed_task, sed_variables, log=None, config=None):
+def exec_sed_task(task, variables, preprocessed_task=None, log=None, config=None):
     ''' Execute a task and save its results
 
     Args:
-       sed_task (:obj:`Task`): task
-       sed_variables (:obj:`list` of :obj:`Variable`): variables that should be recorded
-       log (:obj:`TaskLog`, optional): log for the task
-       config (:obj:`Config`, optional): BioSimulators common configuration
+        task (:obj:`Task`): task
+        variables (:obj:`list` of :obj:`Variable`): variables that should be recorded
+        preprocessed_task (:obj:`object`, optional): preprocessed information about the task, including possible
+            model changes and variables. This can be used to avoid repeatedly executing the same initialization
+            for repeated calls to this method.
+        log (:obj:`TaskLog`, optional): log for the task
+        config (:obj:`Config`, optional): BioSimulators common configuration
 
     Returns:
         :obj:`tuple`:
@@ -79,18 +82,21 @@ def exec_sed_task(sed_task, sed_variables, log=None, config=None):
     if config.LOG and not log:
         log = TaskLog()
 
+    if preprocessed_task is None:
+        preprocessed_task = preprocess_sed_task(task, variables, config=config)
+
     # check that a simulation (or a similar simulation) can be executed with OpenCOR
-    opencor_sed_task, opencor_variable_names = validate_simulation(sed_task, sed_variables, config=config)
+    opencor_sed_task, opencor_variable_names = validate_simulation(task, variables, config=config)
 
     # load an OpenCOR simulation
-    opencor_sim = load_opencor_simulation(opencor_sed_task, sed_variables)
+    opencor_sim = load_opencor_simulation(opencor_sed_task, variables)
 
     # execute the simulation
     if not opencor_sim.run():
         raise RuntimeError('OpenCOR failed unexpectedly.')
 
     # collect the results of the simulation
-    variable_results = get_results_from_opencor_simulation(opencor_sim, sed_task, sed_variables, opencor_variable_names)
+    variable_results = get_results_from_opencor_simulation(opencor_sim, task, variables, opencor_variable_names)
 
     # log action
     if config.LOG:
@@ -98,3 +104,21 @@ def exec_sed_task(sed_task, sed_variables, log=None, config=None):
 
     # return results and log
     return variable_results, log
+
+
+def preprocess_sed_task(task, variables, config=None):
+    """ Preprocess a SED task, including its possible model changes and variables. This is useful for avoiding
+    repeatedly initializing tasks on repeated calls of :obj:`exec_sed_task`.
+
+    Args:
+        task (:obj:`Task`): task
+        variables (:obj:`list` of :obj:`Variable`): variables that should be recorded
+        preprocessed_task (:obj:`PreprocessedTask`, optional): preprocessed information about the task, including possible
+            model changes and variables. This can be used to avoid repeatedly executing the same initialization for repeated
+            calls to this method.
+        config (:obj:`Config`, optional): BioSimulators common configuration
+
+    Returns:
+        :obj:`object`: preprocessed information about the task
+    """
+    pass
