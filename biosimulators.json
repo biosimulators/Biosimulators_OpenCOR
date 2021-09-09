@@ -21,7 +21,8 @@
   },
   "pythonApi": {
     "package": "biosimulators-opencor",
-    "module": "biosimulators_opencor"
+    "module": "biosimulators_opencor",
+    "installationInstructions": "https://docs.biosimulators.org/Biosimulators_OpenCOR/installation.html"
   },
   "authors": [
     {
