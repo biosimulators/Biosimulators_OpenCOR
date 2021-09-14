@@ -1,7 +1,7 @@
 {
   "id": "opencor",
   "name": "OpenCOR",
-  "version": "2021-08-19",
+  "version": "2021-09-14",
   "description": "Open source cross-platform modelling environment",
   "urls": [
     {
@@ -10,7 +10,7 @@
     }
   ],
   "image": {
-    "url": "ghcr.io/biosimulators/biosimulators_opencor/opencor:2021-08-19",
+    "url": "ghcr.io/biosimulators/biosimulators_opencor/opencor:2021-09-14",
     "format": {
       "namespace": "EDAM",
       "id": "format_3973",
@@ -60,11 +60,13 @@
     }
   ],
   "references": {
-    "identifiers": [{
-            "namespace": "pypi",
-            "id": "biosimulators-opencor",
-            "url": "https://pypi.org/project/biosimulators-opencor/"
-          }],
+    "identifiers": [
+      {
+        "namespace": "pypi",
+        "id": "biosimulators-opencor",
+        "url": "https://pypi.org/project/biosimulators-opencor/"
+      }
+    ],
     "citations": [
       {
         "title": "OpenCOR: a modular and interoperable approach to computational biology",
