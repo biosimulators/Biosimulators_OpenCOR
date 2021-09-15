@@ -6,16 +6,22 @@
 :License: MIT
 """
 
-from .utils import (validate_simulation, load_opencor_simulation,
+from .utils import (validate_task, validate_simulation, load_opencor_simulation,
                     get_results_from_opencor_simulation, log_opencor_execution, get_mock_libcellml)
 from biosimulators_utils.combine.exec import exec_sedml_docs_in_archive
 from biosimulators_utils.config import get_config, Config  # noqa: F401
+from biosimulators_utils.utils.core import raise_errors_warnings
 from biosimulators_utils.log.data_model import CombineArchiveLog, TaskLog, StandardOutputErrorCapturerLevel  # noqa: F401
 from biosimulators_utils.viz.data_model import VizFormat  # noqa: F401
 from biosimulators_utils.report.data_model import ReportFormat, VariableResults, SedDocumentResults  # noqa: F401
-from biosimulators_utils.sedml.data_model import Task, Variable  # noqa: F401
+from biosimulators_utils.sedml import validation
+from biosimulators_utils.sedml.data_model import Task, ModelAttributeChange, Variable  # noqa: F401
 from biosimulators_utils.sedml.exec import exec_sed_doc as base_exec_sed_doc
+from biosimulators_utils.sedml.utils import apply_changes_to_xml_model
 from unittest import mock
+import copy
+import os
+import tempfile
 
 __all__ = [
     'exec_sedml_docs_in_combine_archive', 'exec_sed_doc', 'exec_sed_task', 'preprocess_sed_task',
@@ -98,7 +104,7 @@ def exec_sed_task(task, variables, preprocessed_task=None, log=None, config=None
     Args:
         task (:obj:`Task`): task
         variables (:obj:`list` of :obj:`Variable`): variables that should be recorded
-        preprocessed_task (:obj:`object`, optional): preprocessed information about the task, including possible
+        preprocessed_task (:obj:`dict`, optional): preprocessed information about the task, including possible
             model changes and variables. This can be used to avoid repeatedly executing the same initialization
             for repeated calls to this method.
         log (:obj:`TaskLog`, optional): log for the task
@@ -125,22 +131,57 @@ def exec_sed_task(task, variables, preprocessed_task=None, log=None, config=None
     if preprocessed_task is None:
         preprocessed_task = preprocess_sed_task(task, variables, config=config)
 
-    # check that a simulation (or a similar simulation) can be executed with OpenCOR
-    opencor_sed_task, opencor_variable_names = validate_simulation(task, variables, config=config)
+    # modify model
+    if task.model.changes:
+        raise_errors_warnings(validation.validate_model_change_types(task.model.changes, (ModelAttributeChange,)),
+                              error_summary='Changes for model `{}` are not supported.'.format(task.model.id))
+
+        model_etree = preprocessed_task['model_etree']
+
+        model = copy.deepcopy(task.model)
+        for change in model.changes:
+            change.new_value = str(change.new_value)
+
+        apply_changes_to_xml_model(model, model_etree, sed_doc=None, working_dir=None)
+
+        model_file, model_filename = tempfile.mkstemp(suffix='.xml')
+        os.close(model_file)
+
+        model_etree.write(model_filename,
+                          xml_declaration=True,
+                          encoding="utf-8",
+                          standalone=False,
+                          pretty_print=False)
+    else:
+        model_filename = task.model.source
+
+    # set up OpenCOR task
+    opencor_task = copy.deepcopy(preprocessed_task['task'])
+    opencor_task.model.source = model_filename
+    opencor_task.model.changes = []
+    opencor_task.simulation.initial_time = task.simulation.initial_time
+    opencor_task.simulation.output_start_time = task.simulation.output_start_time
+    opencor_task.simulation.output_end_time = task.simulation.output_end_time
+    opencor_task.simulation.number_of_steps = task.simulation.number_of_steps
+    opencor_task.simulation = validate_simulation(opencor_task.simulation)
 
     # load an OpenCOR simulation
-    opencor_sim = load_opencor_simulation(opencor_sed_task, variables)
+    opencor_sim = load_opencor_simulation(opencor_task, variables)
+
+    # clean up temporary model
+    if task.model.changes:
+        os.remove(model_filename)
 
     # execute the simulation
     if not opencor_sim.run():
         raise RuntimeError('OpenCOR failed unexpectedly.')
 
     # collect the results of the simulation
-    variable_results = get_results_from_opencor_simulation(opencor_sim, task, variables, opencor_variable_names)
+    variable_results = get_results_from_opencor_simulation(opencor_sim, task, variables, preprocessed_task['variable_names'])
 
     # log action
     if config.LOG:
-        log_opencor_execution(opencor_sed_task, log)
+        log_opencor_execution(opencor_task, log)
 
     # return results and log
     return variable_results, log
@@ -156,6 +197,16 @@ def preprocess_sed_task(task, variables, config=None):
         config (:obj:`Config`, optional): BioSimulators common configuration
 
     Returns:
-        :obj:`object`: preprocessed information about the task
+        :obj:`dict`: preprocessed information about the task
     """
-    pass
+    if not config:
+        config = get_config()
+
+    opencor_task, model_etree, opencor_variable_names = validate_task(task, variables, config=config)
+
+    # return preprocessed information
+    return {
+        'task': opencor_task,
+        'model_etree': model_etree,
+        'variable_names': opencor_variable_names,
+    }

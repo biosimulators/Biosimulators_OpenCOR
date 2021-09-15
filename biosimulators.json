@@ -378,8 +378,12 @@
       ],
       "outputVariablePatterns": [
         {
-          "name": "variables",
+          "name": "constant, algebraic, and state variable values",
           "target": {"value": "/cellml:model/cellml:component/cellml:variable", "grammar": "XPath"}
+        },
+        {
+          "name": "state variable rates of change",
+          "target": {"value": "/cellml:model/cellml:component/cellml:variable/@prime", "grammar": "XPath"}
         }
       ],
       "availableSoftwareInterfaceTypes": [
@@ -500,8 +504,12 @@
       ],
       "outputVariablePatterns": [
         {
-          "name": "variables",
+          "name": "constant, algebraic, and state variable values",
           "target": {"value": "/cellml:model/cellml:component/cellml:variable", "grammar": "XPath"}
+        },
+        {
+          "name": "state variable rates of change",
+          "target": {"value": "/cellml:model/cellml:component/cellml:variable/@prime", "grammar": "XPath"}
         }
       ],
       "availableSoftwareInterfaceTypes": [
@@ -614,8 +622,12 @@
       ],
       "outputVariablePatterns": [
         {
-          "name": "variables",
+          "name": "constant, algebraic, and state variable values",
           "target": {"value": "/cellml:model/cellml:component/cellml:variable", "grammar": "XPath"}
+        },
+        {
+          "name": "state variable rates of change",
+          "target": {"value": "/cellml:model/cellml:component/cellml:variable/@prime", "grammar": "XPath"}
         }
       ],
       "availableSoftwareInterfaceTypes": [
@@ -728,8 +740,12 @@
       ],
       "outputVariablePatterns": [
         {
-          "name": "variables",
+          "name": "constant, algebraic, and state variable values",
           "target": {"value": "/cellml:model/cellml:component/cellml:variable", "grammar": "XPath"}
+        },
+        {
+          "name": "state variable rates of change",
+          "target": {"value": "/cellml:model/cellml:component/cellml:variable/@prime", "grammar": "XPath"}
         }
       ],
       "availableSoftwareInterfaceTypes": [
@@ -855,8 +871,12 @@
       ],
       "outputVariablePatterns": [
         {
-          "name": "variables",
+          "name": "constant, algebraic, and state variable values",
           "target": {"value": "/cellml:model/cellml:component/cellml:variable", "grammar": "XPath"}
+        },
+        {
+          "name": "state variable rates of change",
+          "target": {"value": "/cellml:model/cellml:component/cellml:variable/@prime", "grammar": "XPath"}
         }
       ],
       "availableSoftwareInterfaceTypes": [
@@ -1033,8 +1053,12 @@
       ],
       "outputVariablePatterns": [
         {
-          "name": "variables",
+          "name": "constant, algebraic, and state variable values",
           "target": {"value": "/cellml:model/cellml:component/cellml:variable", "grammar": "XPath"}
+        },
+        {
+          "name": "state variable rates of change",
+          "target": {"value": "/cellml:model/cellml:component/cellml:variable/@prime", "grammar": "XPath"}
         }
       ],
       "availableSoftwareInterfaceTypes": [

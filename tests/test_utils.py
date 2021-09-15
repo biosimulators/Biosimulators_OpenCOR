@@ -4,13 +4,14 @@ from biosimulators_opencor.data_model import KISAO_ALGORITHM_MAP, CvodeIteration
 from biosimulators_utils.log.data_model import TaskLog
 from biosimulators_utils.sedml.data_model import (SedDocument, Model, ModelLanguage, UniformTimeCourseSimulation, Task,
                                                   RepeatedTask, VectorRange, SubTask,
-                                                  Algorithm, AlgorithmParameterChange, DataGenerator, Variable)
+                                                  Algorithm, AlgorithmParameterChange, DataGenerator, Variable, Symbol)
 from biosimulators_utils.sedml.io import SedmlSimulationReader, SedmlSimulationWriter
 from biosimulators_utils.warnings import BioSimulatorsWarning
 from kisao.exceptions import AlgorithmCannotBeSubstitutedException
 from kisao.warnings import AlgorithmSubstitutedWarning
 from unittest import mock
 import copy
+import lxml.etree
 import numpy
 import numpy.testing
 import opencor
@@ -135,65 +136,81 @@ class TestCase(unittest.TestCase):
 
     def test_validate_variable_xpaths(self):
         task, variables = self._get_simulation()
-        var_names = utils.validate_variable_xpaths(variables, task.model.source)
+        model_etree = lxml.etree.parse(task.model.source)
+        var_names = utils.validate_variable_xpaths(variables, model_etree)
         self.assertEqual(var_names, {
             't': 'main/t',
+            'sigma': 'main/sigma',
             'x': 'main/x',
+            'x_prime': 'main/x/prime',
         })
 
         task, variables = self._get_simulation()
         variables[0].target = "/cellml:model/cellml:component[@name='main']/cellml:variable[@name='undefined']"
         with self.assertRaisesRegex(ValueError, 'does not match any'):
-            utils.validate_variable_xpaths(variables, task.model.source)
+            utils.validate_variable_xpaths(variables, model_etree)
 
         task, variables = self._get_simulation()
         variables[0].target = "/cellml:model/cellml:component[@name='main']/cellml:variable"
         with self.assertRaisesRegex(ValueError, 'matches multiple'):
-            utils.validate_variable_xpaths(variables, task.model.source)
+            utils.validate_variable_xpaths(variables, model_etree)
 
         task, variables = self._get_simulation()
         variables[0].target = "/cellml:model/cellml:component[@name='main']/mathml:math"
         variables[0].target_namespaces['mathml'] = 'http://www.w3.org/1998/Math/MathML'
         with self.assertRaisesRegex(ValueError, 'not a valid observable'):
-            utils.validate_variable_xpaths(variables, task.model.source)
+            utils.validate_variable_xpaths(variables, model_etree)
 
-    def test_validate_simulation(self):
         task, variables = self._get_simulation()
-        actual_task, opencor_variable_names = utils.validate_simulation(task, variables)
+        variables = [
+            Variable(
+                id='var',
+                symbol=Symbol.time.value,
+                task=task,
+            )
+        ]
+        with self.assertRaisesRegex(NotImplementedError, 'Symbols are not supported.'):
+            utils.validate_variable_xpaths(variables, model_etree)
+
+    def test_validate_task(self):
+        task, variables = self._get_simulation()
+        actual_task, model_etree, opencor_variable_names = utils.validate_task(task, variables)
         self.assertEqual(opencor_variable_names, {
             't': 'main/t',
+            'sigma': 'main/sigma',
             'x': 'main/x',
+            'x_prime': 'main/x/prime',
         })
 
         task, variables = self._get_simulation()
         task.simulation.output_start_time = 5.
-        utils.validate_simulation(task, variables)
+        utils.validate_task(task, variables)
 
         task, variables = self._get_simulation()
         task.simulation.output_start_time = 5.1
         with self.assertRaisesRegex(NotImplementedError, 'Number of steps must be an integer'):
-            utils.validate_simulation(task, variables)
+            utils.validate_task(task, variables)
 
         task, variables = self._get_simulation()
         variables[0].task = None
         with self.assertRaisesRegex(ValueError, 'Variable must reference a task'):
-            utils.validate_simulation(task, variables)
+            utils.validate_task(task, variables)
 
         task, variables = self._get_simulation()
         variables[0].target = 'undefined'
         with self.assertRaisesRegex(ValueError, 'must reference unique observables'):
-            utils.validate_simulation(task, variables)
+            utils.validate_task(task, variables)
 
         task, variables = self._get_simulation()
         task.simulation.algorithm.kisao_id = 'KISAO_0000560'
         with mock.patch.dict('os.environ', {'ALGORITHM_SUBSTITUTION_POLICY': 'NONE'}):
             with self.assertRaises(AlgorithmCannotBeSubstitutedException):
-                utils.validate_simulation(task, variables)
+                utils.validate_task(task, variables)
 
         task, variables = self._get_simulation()
         task.simulation.algorithm.kisao_id = 'KISAO_0000560'
         with mock.patch.dict('os.environ', {'ALGORITHM_SUBSTITUTION_POLICY': 'SIMILAR_VARIABLES'}):
-            utils.validate_simulation(task, variables)
+            utils.validate_task(task, variables)
 
     def test_save_task_to_opencor_sedml_file(self):
         task, variables = self._get_simulation()
@@ -215,6 +232,7 @@ class TestCase(unittest.TestCase):
             data_generators=[
                 DataGenerator(id='data_generator_t', variables=[variables[0]], math=variables[0].id),
                 DataGenerator(id='data_generator_x', variables=[variables[1]], math=variables[1].id),
+                DataGenerator(id='data_generator_x_prime', variables=[variables[2]], math=variables[2].id),
             ],
         ))
         expected_doc.models[0].id = 'model'
@@ -224,12 +242,12 @@ class TestCase(unittest.TestCase):
         for data_generator in expected_doc.data_generators:
             data_generator.variables[0].task = expected_doc.tasks[1]
 
-        doc = utils.build_opencor_sedml_doc(task, variables)
+        doc = utils.build_opencor_sedml_doc(task, variables, include_data_generators=True)
         self.assertTrue(doc.is_equal(expected_doc))
 
-        filename = utils.save_task_to_opencor_sedml_file(task, variables)
+        filename = utils.save_task_to_opencor_sedml_file(task, variables, include_data_generators=True)
         with mock.patch.dict('sys.modules', libcellml=utils.get_mock_libcellml()):
-            doc = SedmlSimulationReader().run(filename)
+            doc = SedmlSimulationReader().run(filename, validate_models_with_languages=False)
         expected_doc.models[0].source = os.path.relpath(expected_doc.models[0].source, os.path.dirname(filename))
         self.assertTrue(doc.is_equal(expected_doc))
 
@@ -271,12 +289,14 @@ class TestCase(unittest.TestCase):
     def test_get_results_from_opencor_simulation(self):
         filename = os.path.abspath(os.path.join(os.path.dirname(__file__), 'fixtures', 'lorenz.sedml'))
         task, variables = self._get_simulation()
+        model_etree = lxml.etree.parse(task.model.source)
+
         sim = task.simulation
         sim.initial_time = 0.
         sim.output_start_time = 0.
         sim.output_end_time = 50.
         sim.number_of_steps = 50000
-        variable_names = utils.validate_variable_xpaths(variables, task.model.source)
+        variable_names = utils.validate_variable_xpaths(variables, model_etree)
         opencor_sim = opencor.open_simulation(filename)
         opencor_sim.run()
         results = utils.get_results_from_opencor_simulation(opencor_sim, task, variables, variable_names)
@@ -287,7 +307,7 @@ class TestCase(unittest.TestCase):
 
         # generated SED-ML file
         task, variables = self._get_simulation()
-        variable_names = utils.validate_variable_xpaths(variables, task.model.source)
+        variable_names = utils.validate_variable_xpaths(variables, model_etree)
         sim = task.simulation
         opencor_sim = utils.load_opencor_simulation(task, variables)
         opencor_sim.run()
@@ -301,7 +321,8 @@ class TestCase(unittest.TestCase):
         task, variables = self._get_simulation()
         task.simulation.initial_time = 5.
         task.simulation.output_start_time = 5.
-        variable_names = utils.validate_variable_xpaths(variables, task.model.source)
+        model_etree = lxml.etree.parse(task.model.source)
+        variable_names = utils.validate_variable_xpaths(variables, model_etree)
         sim = task.simulation
         opencor_sim = utils.load_opencor_simulation(task, variables)
         opencor_sim.run()
@@ -316,7 +337,8 @@ class TestCase(unittest.TestCase):
         task, variables = self._get_simulation()
         task.simulation.initial_time = 0.
         task.simulation.output_start_time = 5.
-        variable_names = utils.validate_variable_xpaths(variables, task.model.source)
+        model_etree = lxml.etree.parse(task.model.source)
+        variable_names = utils.validate_variable_xpaths(variables, model_etree)
         sim = task.simulation
         opencor_sim = utils.load_opencor_simulation(task, variables)
         opencor_sim.run()
@@ -328,7 +350,8 @@ class TestCase(unittest.TestCase):
 
     def test_get_results_from_opencor_simulation_invalid_observable(self):
         task, variables = self._get_simulation()
-        variable_names = utils.validate_variable_xpaths(variables, task.model.source)
+        model_etree = lxml.etree.parse(task.model.source)
+        variable_names = utils.validate_variable_xpaths(variables, model_etree)
         opencor_sim = utils.load_opencor_simulation(task, variables)
         opencor_sim.run()
         variable_names['x'] = 'main/undefined'
@@ -363,8 +386,20 @@ class TestCase(unittest.TestCase):
                 task=task,
             ),
             Variable(
+                id='sigma',
+                target="/cellml:model/cellml:component[@name='main']/cellml:variable[@name='sigma']",
+                target_namespaces=self.NAMESPACES,
+                task=task,
+            ),
+            Variable(
                 id='x',
                 target="/cellml:model/cellml:component[@name='main']/cellml:variable[@name='x']",
+                target_namespaces=self.NAMESPACES,
+                task=task,
+            ),
+            Variable(
+                id='x_prime',
+                target="/cellml:model/cellml:component[@name='main']/cellml:variable[@name='x']/@prime",
                 target_namespaces=self.NAMESPACES,
                 task=task,
             ),

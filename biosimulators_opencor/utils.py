@@ -12,7 +12,7 @@ from biosimulators_utils.data_model import ValueType  # noqa: F401
 from biosimulators_utils.log.data_model import TaskLog  # noqa: F401
 from biosimulators_utils.report.data_model import VariableResults  # noqa: F401
 from biosimulators_utils.sedml.data_model import (  # noqa: F401
-    SedDocument, ModelLanguage, UniformTimeCourseSimulation, Algorithm, Task, RepeatedTask,
+    SedDocument, ModelLanguage, ModelAttributeChange, UniformTimeCourseSimulation, Algorithm, Task, RepeatedTask,
     VectorRange, SubTask, DataGenerator, Variable)
 from biosimulators_utils.sedml.io import SedmlSimulationWriter
 from biosimulators_utils.sedml import validation
@@ -30,8 +30,9 @@ import tempfile
 
 
 __all__ = [
-    'validate_simulation',
+    'validate_task',
     'validate_variable_xpaths',
+    'validate_simulation',
     'get_opencor_algorithm',
     'get_opencor_parameter_value',
     'build_opencor_sedml_doc',
@@ -44,7 +45,7 @@ __all__ = [
 ]
 
 
-def validate_simulation(task, variables, config=None):
+def validate_task(task, variables, config=None):
     """ Validate that a simulation can be executed with OpenCOR
 
     Args:
@@ -55,8 +56,9 @@ def validate_simulation(task, variables, config=None):
     Returns:
         :obj:`tuple:`:
 
-            :obj:`Task`: possibly alternate task that OpenCOR should execute
-            :obj:`dict`: dictionary that maps the id of each SED variable to the name that OpenCOR uses to reference it
+            * :obj:`Task`: possibly alternate task that OpenCOR should execute
+            * :obj:`lxml.etree._ElementTree`: element tree for model
+            * :obj:`dict`: dictionary that maps the id of each SED variable to the name that OpenCOR uses to reference it
     """
     config = config or get_config()
     model = task.model
@@ -67,7 +69,7 @@ def validate_simulation(task, variables, config=None):
                               error_summary='Task `{}` is invalid.'.format(task.id))
         raise_errors_warnings(validation.validate_model_language(model.language, ModelLanguage.CellML),
                               error_summary='Language for model `{}` is not supported.'.format(model.id))
-        raise_errors_warnings(validation.validate_model_change_types(model.changes, ()),
+        raise_errors_warnings(validation.validate_model_change_types(model.changes, (ModelAttributeChange,)),
                               error_summary='Changes for model `{}` are not supported.'.format(model.id))
         raise_errors_warnings(*validation.validate_model_changes(model),
                               error_summary='Changes for model `{}` are invalid.'.format(model.id))
@@ -78,49 +80,36 @@ def validate_simulation(task, variables, config=None):
         raise_errors_warnings(*validation.validate_data_generator_variables(variables),
                               error_summary='Data generator variables for task `{}` are invalid.'.format(task.id))
 
-    opencor_variable_names = validate_variable_xpaths(variables, model.source)
+    # read model; TODO: support imports
+    model_etree = lxml.etree.parse(model.source)
 
-    opencor_task = copy.deepcopy(task)
+    # validate variables
+    opencor_variable_names = validate_variable_xpaths(variables, model_etree)
 
-    opencor_sim = opencor_task.simulation
-    opencor_sim.number_of_steps = (
-        sim.output_end_time - sim.initial_time
-    ) / (
-        sim.output_end_time - sim.output_start_time
-    ) * sim.number_of_steps
-    opencor_sim.output_start_time = sim.initial_time
-
-    if abs(opencor_sim.number_of_steps - int(opencor_sim.number_of_steps)) > 1e-8:
-        msg = (
-            'Number of steps must be an integer, not `{}`:'
-            '\n  Initial time: {}'
-            '\n  Output start time: {}'
-            '\n  Output end time: {}'
-            '\n  Number of steps (output start - end time) time: {}'
-        ).format(opencor_sim.number_of_steps, sim.initial_time, sim.output_start_time, sim.output_end_time, sim.number_of_steps)
-        raise NotImplementedError(msg)
-    else:
-        opencor_sim.number_of_steps = int(opencor_sim.number_of_steps)
+    # validate simulation
+    opencor_simulation = validate_simulation(task.simulation)
 
     # check that OpenCOR can execute the request algorithm (or a similar one)
-    opencor_task.simulation.algorithm = get_opencor_algorithm(opencor_task.simulation.algorithm, config=config)
+    opencor_algorithm = get_opencor_algorithm(task.simulation.algorithm, config=config)
 
-    return opencor_task, opencor_variable_names
+    # create new task to manage configuration for OpenCOR
+    opencor_task = copy.deepcopy(task)
+    opencor_task.simulation = opencor_simulation
+    opencor_task.simulation.algorithm = opencor_algorithm
+
+    return opencor_task, model_etree, opencor_variable_names
 
 
-def validate_variable_xpaths(sed_variables, model_filename):
+def validate_variable_xpaths(sed_variables, model_etree):
     """ Get the names OpenCOR uses to refer to model variable
 
     Args:
-        model_filename (:obj:`str`): path to model
+        model_etree (:obj:`lxml.etree._ElementTree`): element tree for model
         sed_variables (:obj:`list` of :obj:`Variable`): SED variables
 
     Returns:
         :obj:`dict`: dictionary that maps the id of each SED variable to the name that OpenCOR uses to reference it
     """
-    # TODO: support imports
-    model_etree = lxml.etree.parse(model_filename)
-
     opencor_variable_names = {}
     for sed_variable in sed_variables:
         if not sed_variable.target:
@@ -129,7 +118,9 @@ def validate_variable_xpaths(sed_variables, model_filename):
 
         namespaces = copy.copy(sed_variable.target_namespaces)
         namespaces.pop(None, None)
-        xml_objs = model_etree.xpath(sed_variable.target, namespaces=namespaces)
+
+        obj_target, _, attrib_target = sed_variable.target.partition('/@')
+        xml_objs = model_etree.xpath(obj_target, namespaces=namespaces)
 
         if len(xml_objs) == 0:
             msg = (
@@ -159,9 +150,50 @@ def validate_variable_xpaths(sed_variables, model_filename):
             if tag == 'model':
                 break
 
+        if attrib_target:
+            names.insert(0, attrib_target)
         opencor_variable_names[sed_variable.id] = '/'.join(reversed(names))
 
     return opencor_variable_names
+
+
+def validate_simulation(simulation):
+    """ Validate a simulation
+
+    Args:
+        simulation (:obj:`UniformTimeCourseSimulation`): requested simulation
+
+    Returns:
+        :obj:`UniformTimeCourseSimulation`: simulation instructions for OpenCOR
+    """
+    number_of_steps = (
+        simulation.output_end_time - simulation.initial_time
+    ) / (
+        simulation.output_end_time - simulation.output_start_time
+    ) * simulation.number_of_steps
+    output_start_time = simulation.initial_time
+
+    if abs(number_of_steps - round(number_of_steps)) > 1e-8:
+        msg = (
+            'Number of steps must be an integer, not `{}`:'
+            '\n  Initial time: {}'
+            '\n  Output start time: {}'
+            '\n  Output end time: {}'
+            '\n  Number of steps (output start - end time) time: {}'
+        ).format(
+            number_of_steps, simulation.initial_time,
+            simulation.output_start_time, simulation.output_end_time,
+            simulation.number_of_steps,
+        )
+        raise NotImplementedError(msg)
+    else:
+        number_of_steps = round(number_of_steps)
+
+    opencor_simulation = copy.deepcopy(simulation)
+    opencor_simulation.number_of_steps = number_of_steps
+    opencor_simulation.output_start_time = output_start_time
+
+    return opencor_simulation
 
 
 def get_opencor_algorithm(requested_alg, config=None):
@@ -266,12 +298,13 @@ def get_opencor_parameter_value(value, value_type, enum_cls=None):
         return True, value
 
 
-def build_opencor_sedml_doc(task, variables):
+def build_opencor_sedml_doc(task, variables, include_data_generators=False):
     """ Create an OpenCOR-compatible SED-ML document for a task and its output variables
 
     Args:
         task (:obj:`Task`): SED task
         variables (:obj:`list` of :obj:`Variable`): SED variables
+        include_data_generators (:obj:`bool`, optional): whether to export data generators
 
     Returns:
         :obj:`SedDocument`: SED document
@@ -300,31 +333,33 @@ def build_opencor_sedml_doc(task, variables):
     doc.tasks.append(basic_task)
     doc.tasks.append(repeated_task)
 
-    for variable in variables:
-        doc.data_generators.append(
-            DataGenerator(
-                id='data_generator_' + variable.id,
-                variables=[
-                    Variable(id=variable.id, target=variable.target, target_namespaces=variable.target_namespaces, task=repeated_task),
-                ],
-                math=variable.id,
+    if include_data_generators:
+        for variable in variables:
+            doc.data_generators.append(
+                DataGenerator(
+                    id='data_generator_' + variable.id,
+                    variables=[
+                        Variable(id=variable.id, target=variable.target, target_namespaces=variable.target_namespaces, task=repeated_task),
+                    ],
+                    math=variable.id,
+                )
             )
-        )
 
     return doc
 
 
-def save_task_to_opencor_sedml_file(task, variables):
+def save_task_to_opencor_sedml_file(task, variables, include_data_generators=False):
     """ Save a SED task to an OpenCOR-compatible SED-ML file
 
     Args:
         task (:obj:`Task`): SED task
         variables (:obj:`list` of :obj:`Variable`): SED variables
+        include_data_generators (:obj:`bool`, optional): whether to export data generators
 
     Returns:
         :obj:`str`: path to SED-ML file for the SED document
     """
-    doc = build_opencor_sedml_doc(task, variables)
+    doc = build_opencor_sedml_doc(task, variables, include_data_generators=include_data_generators)
 
     fid, sed_filename = tempfile.mkstemp(suffix='.sedml')
     os.close(fid)
@@ -333,23 +368,24 @@ def save_task_to_opencor_sedml_file(task, variables):
 
     # use a mocked version because libCellML cannot be installed into the OpenCOR docker image
     with mock.patch.dict('sys.modules', libcellml=get_mock_libcellml()):
-        SedmlSimulationWriter().run(doc, sed_filename)
+        SedmlSimulationWriter().run(doc, sed_filename, validate_models_with_languages=False)
 
     return sed_filename
 
 
-def load_opencor_simulation(task, variables):
+def load_opencor_simulation(task, variables, include_data_generators=False):
     """ Load an OpenCOR simulation
 
     Args:
         task (:obj:`Task`): SED task
         variables (:obj:`list` of :obj:`Variable`): SED variables
+        include_data_generators (:obj:`bool`, optional): whether to export data generators
 
     Returns:
         :obj:`PythonQt.private.SimulationSupport.Simulation`: OpenCOR simulation
     """
     # save SED-ML to a file
-    filename = save_task_to_opencor_sedml_file(task, variables)
+    filename = save_task_to_opencor_sedml_file(task, variables, include_data_generators=include_data_generators)
 
     # Read the SED-ML file
     try:

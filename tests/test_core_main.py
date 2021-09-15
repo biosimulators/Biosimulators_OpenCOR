@@ -45,8 +45,74 @@ class TestCase(unittest.TestCase):
     def test_exec_sed_task(self):
         task, variables = self._get_simulation()
         log = TaskLog()
-        results, log = core.exec_sed_task(task, variables, log)
+        results, log = core.exec_sed_task(task, variables, log=log)
         self._assert_variable_results(task, variables, results)
+
+    def test_exec_sed_task_with_algebraic_variable(self):
+        task, variables = self._get_simulation()
+        task.model.source = os.path.abspath(os.path.join(os.path.dirname(__file__), 'fixtures', 'parabola_variant_dae_model.cellml'))
+        variables[0].target = "/cellml:model/cellml:component[@name='main']/cellml:variable[@name='time']"
+        variables.pop()
+        log = TaskLog()
+        results, log = core.exec_sed_task(task, variables, log=log)
+        self._assert_variable_results(task, variables, results)
+
+    def test_exec_sed_task_with_changes(self):
+        task, _ = self._get_simulation()
+        var_names = ['t', 'x', 'y', 'z']
+        variables = []
+        for var_name in var_names:
+            task.model.changes.append(sedml_data_model.ModelAttributeChange(
+                target="/cellml:model/cellml:component[@name='main']/cellml:variable[@name='{}']/@initial_value".format(var_name),
+                target_namespaces=self.NAMESPACES,
+                new_value=None
+            ))
+            variables.append(sedml_data_model.Variable(
+                id=var_name,
+                target="/cellml:model/cellml:component[@name='main']/cellml:variable[@name='{}']".format(var_name),
+                target_namespaces=self.NAMESPACES,
+                task=task,
+            ))
+        preprocessed_task = core.preprocess_sed_task(task, variables)
+
+        task.model.changes = []
+        results, _ = core.exec_sed_task(task, variables, preprocessed_task=preprocessed_task)
+        self.assertEqual(
+            results['x'][0:int(task.simulation.number_of_steps / 2) + 1].shape,
+            results['x'][-(int(task.simulation.number_of_steps / 2) + 1):].shape,
+        )
+        with self.assertRaises(AssertionError):
+            numpy.testing.assert_allclose(
+                results['x'][0:int(task.simulation.number_of_steps / 2) + 1],
+                results['x'][-(int(task.simulation.number_of_steps / 2) + 1):],
+            )
+
+        task.simulation.output_end_time = task.simulation.output_end_time / 2
+        task.simulation.number_of_steps = int(task.simulation.number_of_steps / 2)
+
+        results2, _ = core.exec_sed_task(task, variables, preprocessed_task=preprocessed_task)
+        numpy.testing.assert_allclose(
+            results2['x'],
+            results['x'][0:task.simulation.number_of_steps + 1],
+        )
+
+        task.simulation.initial_time += task.simulation.output_end_time
+        task.simulation.output_start_time += task.simulation.output_end_time
+        task.simulation.output_end_time += task.simulation.output_end_time
+        for var_name in var_names:
+            task.model.changes.append(sedml_data_model.ModelAttributeChange(
+                target="/cellml:model/cellml:component[@name='main']/cellml:variable[@name='{}']/@initial_value".format(var_name),
+                target_namespaces=self.NAMESPACES,
+                new_value=results2[var_name][-1],
+            ))
+
+        results3, _ = core.exec_sed_task(task, variables, preprocessed_task=preprocessed_task)
+
+        numpy.testing.assert_allclose(
+            results3['x'],
+            results['x'][-(task.simulation.number_of_steps + 1):],
+            rtol=5e-5,
+        )
 
     def test_exec_sedml_docs_in_combine_archive(self):
         doc, archive_filename = self._build_combine_archive()
@@ -121,6 +187,12 @@ class TestCase(unittest.TestCase):
             sedml_data_model.Variable(
                 id='x',
                 target="/cellml:model/cellml:component[@name='main']/cellml:variable[@name='x']",
+                target_namespaces=self.NAMESPACES,
+                task=task,
+            ),
+            sedml_data_model.Variable(
+                id='x_prime',
+                target="/cellml:model/cellml:component[@name='main']/cellml:variable[@name='x']/@prime",
                 target_namespaces=self.NAMESPACES,
                 task=task,
             ),
