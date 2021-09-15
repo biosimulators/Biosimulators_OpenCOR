@@ -231,8 +231,9 @@ class TestCase(unittest.TestCase):
             ],
             data_generators=[
                 DataGenerator(id='data_generator_t', variables=[variables[0]], math=variables[0].id),
-                DataGenerator(id='data_generator_x', variables=[variables[1]], math=variables[1].id),
-                DataGenerator(id='data_generator_x_prime', variables=[variables[2]], math=variables[2].id),
+                DataGenerator(id='data_generator_sigma', variables=[variables[1]], math=variables[1].id),
+                DataGenerator(id='data_generator_x', variables=[variables[2]], math=variables[2].id),
+                DataGenerator(id='data_generator_x_prime', variables=[variables[3]], math=variables[3].id),
             ],
         ))
         expected_doc.models[0].id = 'model'
