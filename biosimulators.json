@@ -19,6 +19,12 @@
     },
     "operatingSystemType": "Linux"
   },
+  "cli": {
+    "packageRepository": "PyPI",
+    "package": "biosimulators-opencor",
+    "command": "biosimulators-opencor",
+    "installationInstructions": "https://docs.biosimulators.org/Biosimulators_OpenCOR/installation.html"
+  },
   "pythonApi": {
     "package": "biosimulators-opencor",
     "module": "biosimulators_opencor",
