@@ -1,7 +1,7 @@
 {
   "id": "opencor",
   "name": "OpenCOR",
-  "version": "2021-09-14",
+  "version": "2021-10-05",
   "description": "Open source cross-platform modelling environment",
   "urls": [
     {
@@ -10,7 +10,7 @@
     }
   ],
   "image": {
-    "url": "ghcr.io/biosimulators/biosimulators_opencor/opencor:2021-09-14",
+    "url": "ghcr.io/biosimulators/biosimulators_opencor/opencor:2021-10-05",
     "format": {
       "namespace": "EDAM",
       "id": "format_3973",
@@ -127,7 +127,11 @@
       "modelChangePatterns": [
         {
           "name": "Change component attributes",
-          "types": ["SedAttributeModelChange", "SedComputeAttributeChangeModelChange", "SedSetValueAttributeModelChange"],
+          "types": [
+            "SedAttributeModelChange",
+            "SedComputeAttributeChangeModelChange",
+            "SedSetValueAttributeModelChange"
+          ],
           "target": {
             "value": "//*/@*",
             "grammar": "XPath"
@@ -135,7 +139,9 @@
         },
         {
           "name": "Add components",
-          "types": ["SedAddXmlModelChange"],
+          "types": [
+            "SedAddXmlModelChange"
+          ],
           "target": {
             "value": "//*",
             "grammar": "XPath"
@@ -143,7 +149,9 @@
         },
         {
           "name": "Remove components",
-          "types": ["SedRemoveXmlModelChange"],
+          "types": [
+            "SedRemoveXmlModelChange"
+          ],
           "target": {
             "value": "//*",
             "grammar": "XPath"
@@ -151,12 +159,14 @@
         },
         {
           "name": "Change components",
-          "types": ["SedChangeXmlModelChange"],
+          "types": [
+            "SedChangeXmlModelChange"
+          ],
           "target": {
             "value": "//*",
             "grammar": "XPath"
           }
-        }        
+        }
       ],
       "simulationFormats": [
         {
@@ -166,7 +176,9 @@
           "supportedFeatures": []
         }
       ],
-      "simulationTypes": ["SedUniformTimeCourseSimulation"],
+      "simulationTypes": [
+        "SedUniformTimeCourseSimulation"
+      ],
       "archiveFormats": [
         {
           "namespace": "EDAM",
@@ -385,11 +397,17 @@
       "outputVariablePatterns": [
         {
           "name": "constant, algebraic, and state variable values",
-          "target": {"value": "/cellml:model/cellml:component/cellml:variable", "grammar": "XPath"}
+          "target": {
+            "value": "/cellml:model/cellml:component/cellml:variable",
+            "grammar": "XPath"
+          }
         },
         {
           "name": "state variable rates of change",
-          "target": {"value": "/cellml:model/cellml:component/cellml:variable/@prime", "grammar": "XPath"}
+          "target": {
+            "value": "/cellml:model/cellml:component/cellml:variable/@prime",
+            "grammar": "XPath"
+          }
         }
       ],
       "availableSoftwareInterfaceTypes": [
@@ -436,7 +454,11 @@
       "modelChangePatterns": [
         {
           "name": "Change component attributes",
-          "types": ["SedAttributeModelChange", "SedComputeAttributeChangeModelChange", "SedSetValueAttributeModelChange"],
+          "types": [
+            "SedAttributeModelChange",
+            "SedComputeAttributeChangeModelChange",
+            "SedSetValueAttributeModelChange"
+          ],
           "target": {
             "value": "//*/@*",
             "grammar": "XPath"
@@ -444,7 +466,9 @@
         },
         {
           "name": "Add components",
-          "types": ["SedAddXmlModelChange"],
+          "types": [
+            "SedAddXmlModelChange"
+          ],
           "target": {
             "value": "//*",
             "grammar": "XPath"
@@ -452,7 +476,9 @@
         },
         {
           "name": "Remove components",
-          "types": ["SedRemoveXmlModelChange"],
+          "types": [
+            "SedRemoveXmlModelChange"
+          ],
           "target": {
             "value": "//*",
             "grammar": "XPath"
@@ -460,12 +486,14 @@
         },
         {
           "name": "Change components",
-          "types": ["SedChangeXmlModelChange"],
+          "types": [
+            "SedChangeXmlModelChange"
+          ],
           "target": {
             "value": "//*",
             "grammar": "XPath"
           }
-        }        
+        }
       ],
       "simulationFormats": [
         {
@@ -475,7 +503,9 @@
           "supportedFeatures": []
         }
       ],
-      "simulationTypes": ["SedUniformTimeCourseSimulation"],
+      "simulationTypes": [
+        "SedUniformTimeCourseSimulation"
+      ],
       "archiveFormats": [
         {
           "namespace": "EDAM",
@@ -511,11 +541,17 @@
       "outputVariablePatterns": [
         {
           "name": "constant, algebraic, and state variable values",
-          "target": {"value": "/cellml:model/cellml:component/cellml:variable", "grammar": "XPath"}
+          "target": {
+            "value": "/cellml:model/cellml:component/cellml:variable",
+            "grammar": "XPath"
+          }
         },
         {
           "name": "state variable rates of change",
-          "target": {"value": "/cellml:model/cellml:component/cellml:variable/@prime", "grammar": "XPath"}
+          "target": {
+            "value": "/cellml:model/cellml:component/cellml:variable/@prime",
+            "grammar": "XPath"
+          }
         }
       ],
       "availableSoftwareInterfaceTypes": [
@@ -554,7 +590,11 @@
       "modelChangePatterns": [
         {
           "name": "Change component attributes",
-          "types": ["SedAttributeModelChange", "SedComputeAttributeChangeModelChange", "SedSetValueAttributeModelChange"],
+          "types": [
+            "SedAttributeModelChange",
+            "SedComputeAttributeChangeModelChange",
+            "SedSetValueAttributeModelChange"
+          ],
           "target": {
             "value": "//*/@*",
             "grammar": "XPath"
@@ -562,7 +602,9 @@
         },
         {
           "name": "Add components",
-          "types": ["SedAddXmlModelChange"],
+          "types": [
+            "SedAddXmlModelChange"
+          ],
           "target": {
             "value": "//*",
             "grammar": "XPath"
@@ -570,7 +612,9 @@
         },
         {
           "name": "Remove components",
-          "types": ["SedRemoveXmlModelChange"],
+          "types": [
+            "SedRemoveXmlModelChange"
+          ],
           "target": {
             "value": "//*",
             "grammar": "XPath"
@@ -578,12 +622,14 @@
         },
         {
           "name": "Change components",
-          "types": ["SedChangeXmlModelChange"],
+          "types": [
+            "SedChangeXmlModelChange"
+          ],
           "target": {
             "value": "//*",
             "grammar": "XPath"
           }
-        }        
+        }
       ],
       "simulationFormats": [
         {
@@ -593,7 +639,9 @@
           "supportedFeatures": []
         }
       ],
-      "simulationTypes": ["SedUniformTimeCourseSimulation"],
+      "simulationTypes": [
+        "SedUniformTimeCourseSimulation"
+      ],
       "archiveFormats": [
         {
           "namespace": "EDAM",
@@ -629,11 +677,17 @@
       "outputVariablePatterns": [
         {
           "name": "constant, algebraic, and state variable values",
-          "target": {"value": "/cellml:model/cellml:component/cellml:variable", "grammar": "XPath"}
+          "target": {
+            "value": "/cellml:model/cellml:component/cellml:variable",
+            "grammar": "XPath"
+          }
         },
         {
           "name": "state variable rates of change",
-          "target": {"value": "/cellml:model/cellml:component/cellml:variable/@prime", "grammar": "XPath"}
+          "target": {
+            "value": "/cellml:model/cellml:component/cellml:variable/@prime",
+            "grammar": "XPath"
+          }
         }
       ],
       "availableSoftwareInterfaceTypes": [
@@ -672,7 +726,11 @@
       "modelChangePatterns": [
         {
           "name": "Change component attributes",
-          "types": ["SedAttributeModelChange", "SedComputeAttributeChangeModelChange", "SedSetValueAttributeModelChange"],
+          "types": [
+            "SedAttributeModelChange",
+            "SedComputeAttributeChangeModelChange",
+            "SedSetValueAttributeModelChange"
+          ],
           "target": {
             "value": "//*/@*",
             "grammar": "XPath"
@@ -680,7 +738,9 @@
         },
         {
           "name": "Add components",
-          "types": ["SedAddXmlModelChange"],
+          "types": [
+            "SedAddXmlModelChange"
+          ],
           "target": {
             "value": "//*",
             "grammar": "XPath"
@@ -688,7 +748,9 @@
         },
         {
           "name": "Remove components",
-          "types": ["SedRemoveXmlModelChange"],
+          "types": [
+            "SedRemoveXmlModelChange"
+          ],
           "target": {
             "value": "//*",
             "grammar": "XPath"
@@ -696,12 +758,14 @@
         },
         {
           "name": "Change components",
-          "types": ["SedChangeXmlModelChange"],
+          "types": [
+            "SedChangeXmlModelChange"
+          ],
           "target": {
             "value": "//*",
             "grammar": "XPath"
           }
-        }        
+        }
       ],
       "simulationFormats": [
         {
@@ -711,7 +775,9 @@
           "supportedFeatures": []
         }
       ],
-      "simulationTypes": ["SedUniformTimeCourseSimulation"],
+      "simulationTypes": [
+        "SedUniformTimeCourseSimulation"
+      ],
       "archiveFormats": [
         {
           "namespace": "EDAM",
@@ -747,11 +813,17 @@
       "outputVariablePatterns": [
         {
           "name": "constant, algebraic, and state variable values",
-          "target": {"value": "/cellml:model/cellml:component/cellml:variable", "grammar": "XPath"}
+          "target": {
+            "value": "/cellml:model/cellml:component/cellml:variable",
+            "grammar": "XPath"
+          }
         },
         {
           "name": "state variable rates of change",
-          "target": {"value": "/cellml:model/cellml:component/cellml:variable/@prime", "grammar": "XPath"}
+          "target": {
+            "value": "/cellml:model/cellml:component/cellml:variable/@prime",
+            "grammar": "XPath"
+          }
         }
       ],
       "availableSoftwareInterfaceTypes": [
@@ -790,7 +862,11 @@
       "modelChangePatterns": [
         {
           "name": "Change component attributes",
-          "types": ["SedAttributeModelChange", "SedComputeAttributeChangeModelChange", "SedSetValueAttributeModelChange"],
+          "types": [
+            "SedAttributeModelChange",
+            "SedComputeAttributeChangeModelChange",
+            "SedSetValueAttributeModelChange"
+          ],
           "target": {
             "value": "//*/@*",
             "grammar": "XPath"
@@ -798,7 +874,9 @@
         },
         {
           "name": "Add components",
-          "types": ["SedAddXmlModelChange"],
+          "types": [
+            "SedAddXmlModelChange"
+          ],
           "target": {
             "value": "//*",
             "grammar": "XPath"
@@ -806,7 +884,9 @@
         },
         {
           "name": "Remove components",
-          "types": ["SedRemoveXmlModelChange"],
+          "types": [
+            "SedRemoveXmlModelChange"
+          ],
           "target": {
             "value": "//*",
             "grammar": "XPath"
@@ -814,12 +894,14 @@
         },
         {
           "name": "Change components",
-          "types": ["SedChangeXmlModelChange"],
+          "types": [
+            "SedChangeXmlModelChange"
+          ],
           "target": {
             "value": "//*",
             "grammar": "XPath"
           }
-        }        
+        }
       ],
       "simulationFormats": [
         {
@@ -829,7 +911,9 @@
           "supportedFeatures": []
         }
       ],
-      "simulationTypes": ["SedUniformTimeCourseSimulation"],
+      "simulationTypes": [
+        "SedUniformTimeCourseSimulation"
+      ],
       "archiveFormats": [
         {
           "namespace": "EDAM",
@@ -878,11 +962,17 @@
       "outputVariablePatterns": [
         {
           "name": "constant, algebraic, and state variable values",
-          "target": {"value": "/cellml:model/cellml:component/cellml:variable", "grammar": "XPath"}
+          "target": {
+            "value": "/cellml:model/cellml:component/cellml:variable",
+            "grammar": "XPath"
+          }
         },
         {
           "name": "state variable rates of change",
-          "target": {"value": "/cellml:model/cellml:component/cellml:variable/@prime", "grammar": "XPath"}
+          "target": {
+            "value": "/cellml:model/cellml:component/cellml:variable/@prime",
+            "grammar": "XPath"
+          }
         }
       ],
       "availableSoftwareInterfaceTypes": [
@@ -921,7 +1011,11 @@
       "modelChangePatterns": [
         {
           "name": "Change component attributes",
-          "types": ["SedAttributeModelChange", "SedComputeAttributeChangeModelChange", "SedSetValueAttributeModelChange"],
+          "types": [
+            "SedAttributeModelChange",
+            "SedComputeAttributeChangeModelChange",
+            "SedSetValueAttributeModelChange"
+          ],
           "target": {
             "value": "//*/@*",
             "grammar": "XPath"
@@ -929,7 +1023,9 @@
         },
         {
           "name": "Add components",
-          "types": ["SedAddXmlModelChange"],
+          "types": [
+            "SedAddXmlModelChange"
+          ],
           "target": {
             "value": "//*",
             "grammar": "XPath"
@@ -937,7 +1033,9 @@
         },
         {
           "name": "Remove components",
-          "types": ["SedRemoveXmlModelChange"],
+          "types": [
+            "SedRemoveXmlModelChange"
+          ],
           "target": {
             "value": "//*",
             "grammar": "XPath"
@@ -945,12 +1043,14 @@
         },
         {
           "name": "Change components",
-          "types": ["SedChangeXmlModelChange"],
+          "types": [
+            "SedChangeXmlModelChange"
+          ],
           "target": {
             "value": "//*",
             "grammar": "XPath"
           }
-        }        
+        }
       ],
       "simulationFormats": [
         {
@@ -960,7 +1060,9 @@
           "supportedFeatures": []
         }
       ],
-      "simulationTypes": ["SedUniformTimeCourseSimulation"],
+      "simulationTypes": [
+        "SedUniformTimeCourseSimulation"
+      ],
       "archiveFormats": [
         {
           "namespace": "EDAM",
@@ -1060,11 +1162,17 @@
       "outputVariablePatterns": [
         {
           "name": "constant, algebraic, and state variable values",
-          "target": {"value": "/cellml:model/cellml:component/cellml:variable", "grammar": "XPath"}
+          "target": {
+            "value": "/cellml:model/cellml:component/cellml:variable",
+            "grammar": "XPath"
+          }
         },
         {
           "name": "state variable rates of change",
-          "target": {"value": "/cellml:model/cellml:component/cellml:variable/@prime", "grammar": "XPath"}
+          "target": {
+            "value": "/cellml:model/cellml:component/cellml:variable/@prime",
+            "grammar": "XPath"
+          }
         }
       ],
       "availableSoftwareInterfaceTypes": [
