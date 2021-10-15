@@ -2,6 +2,7 @@
 [![PyPI](https://img.shields.io/pypi/v/biosimulators_opencor)](https://pypi.org/project/biosimulators_opencor/)
 [![CI status](https://github.com/biosimulators/Biosimulators_OpenCOR/workflows/Continuous%20integration/badge.svg)](https://github.com/biosimulators/Biosimulators_OpenCOR/actions?query=workflow%3A%22Continuous+integration%22)
 [![Test coverage](https://codecov.io/gh/biosimulators/Biosimulators_OpenCOR/branch/dev/graph/badge.svg)](https://codecov.io/gh/biosimulators/Biosimulators_OpenCOR)
+[![All Contributors](https://img.shields.io/github/all-contributors/biosimulators/Biosimulators_OpenCOR/HEAD)](#contributors-)
 
 # BioSimulators-OpenCOR
 BioSimulators-compliant command-line interface and Docker image for the [OpenCOR](https://opencor.ws/) simulation program.
@@ -101,7 +102,7 @@ Documentation is available at https://docs.biosimulators.org/Biosimulators_OpenC
 This package is released under the [MIT](LICENSE).
 
 ## Development team
-This package was developed by the [Karr Lab](https://www.karrlab.org) at the Icahn School of Medicine at Mount Sinai and the [Center for Reproducible Biomedical Modeling](https://reproduciblebiomodels.org/).
+This package was developed by the [Karr Lab](https://www.karrlab.org) at the Icahn School of Medicine at Mount Sinai and the [Center for Reproducible Biomedical Modeling](https://reproduciblebiomodels.org/) with assistance from the contributors listed [here](CONTRIBUTORS.md).
 
 ## Questions and comments
 Please contact the [BioSimulators Team](mailto:info@biosimulators.org) with any questions or comments.
