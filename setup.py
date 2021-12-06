@@ -56,7 +56,7 @@ setuptools.setup(
     ],
     entry_points={
         'console_scripts': [
-            'biosimulators-opencor = biosimulators_opencor.__main__:main',
+            # 'biosimulators-opencor = biosimulators_opencor.__main__:main',
         ],
     },
 )

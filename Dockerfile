@@ -1,5 +1,5 @@
 # VERSION
-ARG VERSION=0.0.8
+ARG VERSION=0.0.9
 ARG SIMULATOR_VERSION="2021-10-05"
 
 # Base OS
@@ -57,6 +57,8 @@ ENV VERBOSE=0 \
 # - ugo+w permissions to `${OPENCORDIR}/python/bin` are needed because the OpenCOR Python pluging dynamically generates these files
 RUN mkdir ${HOMEDIR}/Biosimulators_OpenCOR \
     && chmod -R ugo+w ${OPENCORDIR}/python/bin
+ENV PATH=${OPENCORDIR}/python/bin:$PATH
 WORKDIR ${HOMEDIR}/Biosimulators_OpenCOR
-ENTRYPOINT ["pythonshell", "-m", "biosimulators_opencor"]
+COPY scripts/biosimulators-opencor ${OPENCORDIR}/python/bin
+ENTRYPOINT ["biosimulators-opencor"]
 CMD []

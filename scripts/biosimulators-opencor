@@ -1,0 +1,4 @@
+#!/bin/sh
+
+opencor_path=$(which OpenCOR)
+"$(cd "$(dirname "$opencor_path")"; pwd)/bin/OpenCOR" -c PythonShell -m biosimulators_opencor "$@"
