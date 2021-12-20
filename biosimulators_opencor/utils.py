@@ -409,7 +409,13 @@ def validate_opencor_simulation(sim):
         :obj:`ValueError`: if the simulation is invalid
     """
     if sim.hasBlockingIssues() or not sim.valid():
-        raise ValueError('The task does not describe a valid simulation.')
+        msg = 'The task does not describe a valid simulation:\n\n  {}'.format(
+            '\n\n  '.join(
+                ''.join(lxml.etree.fromstring('<root>' + issue + '</root>').itertext())
+                for issue in sim.issues()
+            )
+        )
+        raise ValueError(msg)
 
 
 def get_results_from_opencor_simulation(opencor_sim, sed_task, sed_variables, opencor_variable_names):
