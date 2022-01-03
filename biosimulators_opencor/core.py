@@ -137,6 +137,7 @@ def exec_sed_task(task, variables, preprocessed_task=None, log=None, config=None
                               error_summary='Changes for model `{}` are not supported.'.format(task.model.id))
 
         model_etree = preprocessed_task['model_etree']
+        working_dir = os.path.dirname(task.model.source)
 
         model = copy.deepcopy(task.model)
         for change in model.changes:
@@ -144,7 +145,7 @@ def exec_sed_task(task, variables, preprocessed_task=None, log=None, config=None
 
         apply_changes_to_xml_model(model, model_etree, sed_doc=None, working_dir=None)
 
-        model_file, model_filename = tempfile.mkstemp(suffix='.xml')
+        model_file, model_filename = tempfile.mkstemp(suffix='.xml', dir=working_dir)
         os.close(model_file)
 
         model_etree.write(model_filename,

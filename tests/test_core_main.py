@@ -48,6 +48,100 @@ class TestCase(unittest.TestCase):
         results, log = core.exec_sed_task(task, variables, log=log)
         self._assert_variable_results(task, variables, results)
 
+    def test_exec_sed_task_with_imported_model_file(self):
+        model_sources = [
+            os.path.abspath(os.path.join(os.path.dirname(__file__), 'fixtures',
+                                         'imported-model-file-pmr-e-2ca', 'HATPase_test.cellml')),
+            os.path.abspath(os.path.join(os.path.dirname(__file__), 'fixtures',
+                                         'imported-model-file-pmr-e-2ca-modified-1', 'HATPase_test.cellml')),
+            os.path.abspath(os.path.join(os.path.dirname(__file__), 'fixtures',
+                                         'imported-model-file-pmr-e-2ca-modified-2', 'subdir-2', 'HATPase_test.cellml')),
+        ]
+        for model_source in model_sources:
+            task = sedml_data_model.Task(
+                id='task',
+                model=sedml_data_model.Model(id='model1', source=model_source, language=sedml_data_model.ModelLanguage.CellML.value),
+                simulation=sedml_data_model.UniformTimeCourseSimulation(
+                    id='simulation',
+                    initial_time=0.,
+                    output_start_time=0.,
+                    output_end_time=50.,
+                    number_of_steps=5000,
+                    algorithm=sedml_data_model.Algorithm(
+                        kisao_id='KISAO_0000019',
+                    ),
+                ),
+            )
+
+            repeated_task_range = sedml_data_model.UniformRange(
+                id='range', start=0, end=1, number_of_steps=1, type=sedml_data_model.UniformRangeType.linear)
+
+            repeated_task = sedml_data_model.RepeatedTask(
+                id='repeated_task',
+                range=repeated_task_range,
+                ranges=[repeated_task_range],
+                sub_tasks=[
+                    sedml_data_model.SubTask(task=task, order=1),
+                ],
+            )
+
+            variables = [
+                sedml_data_model.Variable(
+                    id='pH_ext',
+                    target="/cellml:model/cellml:component[@name='concentrations']/cellml:variable[@name='pH_ext']",
+                    target_namespaces={
+                        'cellml': 'http://www.cellml.org/cellml/1.1#'
+                    },
+                    task=repeated_task,
+                ),
+                sedml_data_model.Variable(
+                    id='fluxes',
+                    target="/cellml:model/cellml:component[@name='fluxes']/cellml:variable[@name='plot']",
+                    target_namespaces={
+                        'cellml': 'http://www.cellml.org/cellml/1.1#'
+                    },
+                    task=repeated_task,
+                ),
+            ]
+
+            doc = sedml_data_model.SedDocument()
+            doc.models.append(task.model)
+            doc.simulations.append(task.simulation)
+            doc.tasks.append(task)
+            doc.tasks.append(repeated_task)
+
+            report = sedml_data_model.Report(id='report1')
+            doc.outputs.append(report)
+            for variable in variables:
+                data_gen = sedml_data_model.DataGenerator(
+                    id='data_generator_' + variable.id,
+                    variables=[
+                        variable,
+                    ],
+                    math=variable.id,
+                )
+                doc.data_generators.append(data_gen)
+                report.data_sets.append(sedml_data_model.DataSet(id='data_set_' + variable.id, label=variable.id, data_generator=data_gen))
+
+            out_dir = os.path.join(self.dirname, 'out')
+            config = get_config()
+            config.REPORT_FORMATS = []
+            config.VIZ_FORMATS = []
+            config.BUNDLE_OUTPUTS = True
+            config.KEEP_INDIVIDUAL_OUTPUTS = True
+            config.COLLECT_SED_DOCUMENT_RESULTS = True
+            results, log = core.exec_sed_doc(doc,
+                                             apply_xml_model_changes=True,
+                                             working_dir=os.path.dirname(task.model.source),
+                                             base_out_path=out_dir, config=config)
+            if log.exception:
+                raise log.exception
+
+            sim = task.simulation
+            for result in results['report1'].values():
+                self.assertEqual(result.shape, (2, 1, sim.number_of_points + 1,))
+                self.assertFalse(numpy.any(numpy.isnan(result)))
+
     def test_exec_sed_task_with_algebraic_variable(self):
         task, variables = self._get_simulation()
         task.model.source = os.path.abspath(os.path.join(os.path.dirname(__file__), 'fixtures', 'parabola_variant_dae_model.cellml'))

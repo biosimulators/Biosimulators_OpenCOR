@@ -1,0 +1,125 @@
+<?xml version='1.0'?>
+<!-- This CellML file was generated from:
+ Weinstein, Alan M. "A mathematical model of the outer medullary collecting duct of the rat." American Journal of Physiology-Renal Physiology 279.1 (2000): F24-F45.
+ The results are compared with Figure 6 in:
+ Chang, Hangil, and Toshiro Fujita. "A numerical model of acid-base transport in rat distal tubule." American Journal of Physiology-Renal Physiology 281.2 (2001): F222-F243.-->
+<model cmeta:id="Weinstein_2000_HATPase" name="Weinstein_2000_HATPase" xmlns="http://www.cellml.org/cellml/1.1#" xmlns:cellml="http://www.cellml.org/cellml/1.1#" xmlns:cmeta="http://www.cellml.org/metadata/1.0#" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <import xlink:href="Units/Units.cellml">
+        <units name="mM" units_ref="mM"/>
+        <units name="per_s" units_ref="per_s"/>
+        <units name="mV" units_ref="mV"/>
+        <units name="umol_per_s_per_cm2" units_ref="umol_per_s_per_cm2"/>
+    </import>
+    <import xlink:href="Weinstein_2000_HATPase.cellml">
+        <component component_ref="H_ATPase" name="H_ATPase"/>
+    </import>
+    <component name="environment">
+        <variable name="time" public_interface="out" units="second"/>
+    </component>
+    <component name="concentrations">
+        <variable name="time" public_interface="in" units="second"/>
+        <variable name="H_int" public_interface="out" units="mM"/>
+        <variable name="H_ext" public_interface="out" units="mM"/>
+        <variable initial_value="-30.0" name="psi_int" units="mV"/>
+        <variable initial_value="0.0" name="psi_ext" units="mV"/>
+        <variable name="psi" public_interface="out" units="mV"/>
+        <variable initial_value="7.5" name="pH_int" units="dimensionless"/>
+        <variable initial_value="4.0" name="pH_ext" units="dimensionless"/>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+                <eq/>
+                <ci>psi</ci>
+                <apply>
+                    <minus/>
+                    <ci>psi_ext</ci>
+                    <ci>psi_int</ci>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <ci>H_int</ci>
+                <apply>
+                    <times/>
+                    <cn cellml:units="mM" type="e-notation">1<sep/>3</cn>
+                    <apply>
+                        <power/>
+                        <cn cellml:units="dimensionless">10</cn>
+                        <apply>
+                            <minus/>
+                            <ci>pH_int</ci>
+                        </apply>
+                    </apply>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <ci>H_ext</ci>
+                <apply>
+                    <times/>
+                    <cn cellml:units="mM" type="e-notation">1<sep/>3</cn>
+                    <apply>
+                        <power/>
+                        <cn cellml:units="dimensionless">10</cn>
+                        <apply>
+                            <minus/>
+                            <ci>pH_ext</ci>
+                        </apply>
+                    </apply>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <apply>
+                    <diff/>
+                    <bvar>
+                        <ci>time</ci>
+                    </bvar>
+                    <ci>pH_int</ci>
+                </apply>
+                <cn cellml:units="per_s">0.0</cn>
+            </apply>
+            <apply>
+                <eq/>
+                <apply>
+                    <diff/>
+                    <bvar>
+                        <ci>time</ci>
+                    </bvar>
+                    <ci>pH_ext</ci>
+                </apply>
+                <cn cellml:units="per_s">0.1</cn>
+            </apply>
+        </math>
+    </component>
+    <component name="fluxes">
+        <variable name="J_Vtype_H_Max" public_interface="in" units="umol_per_s_per_cm2"/>
+        <variable name="J_Vtype_H" public_interface="in" units="umol_per_s_per_cm2"/>
+        <variable name="plot" units="dimensionless"/>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+                <eq/>
+                <ci>plot</ci>
+                <apply>
+                    <divide/>
+                    <ci>J_Vtype_H</ci>
+                    <ci>J_Vtype_H_Max</ci>
+                </apply>
+            </apply>
+        </math>
+    </component>
+    <connection>
+        <map_components component_1="concentrations" component_2="H_ATPase"/>
+        <map_variables variable_1="H_int" variable_2="H_int"/>
+        <map_variables variable_1="H_ext" variable_2="H_ext"/>
+        <map_variables variable_1="psi" variable_2="psi"/>
+    </connection>
+    <connection>
+        <map_components component_1="fluxes" component_2="H_ATPase"/>
+        <map_variables variable_1="J_Vtype_H" variable_2="J_Vtype_H"/>
+        <map_variables variable_1="J_Vtype_H_Max" variable_2="J_Vtype_H_Max"/>
+    </connection>
+    <connection>
+        <map_components component_1="concentrations" component_2="environment"/>
+        <map_variables variable_1="time" variable_2="time"/>
+    </connection>
+</model>

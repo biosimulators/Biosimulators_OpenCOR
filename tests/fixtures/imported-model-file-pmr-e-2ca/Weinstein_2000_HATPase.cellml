@@ -1,0 +1,117 @@
+<?xml version='1.0'?>
+<!-- This CellML file was generated from:
+ Weinstein, Alan M. "A mathematical model of the outer medullary collecting duct of the rat." American Journal of Physiology-Renal Physiology 279.1 (2000): F24-F45.
+ The results are compared with Figure 6 in:
+ Chang, Hangil, and Toshiro Fujita. "A numerical model of acid-base transport in rat distal tubule." American Journal of Physiology-Renal Physiology 281.2 (2001): F222-F243.
+ If J_Vtype_H>0 then the flux direction is from intracellular space to extracellular space. (always [C_int]-J and [C_ext]+J)-->
+<model cmeta:id="Weinstein_2000_HATPase" name="Weinstein_2000_HATPase" xmlns="http://www.cellml.org/cellml/1.1#" xmlns:cellml="http://www.cellml.org/cellml/1.1#" xmlns:cmeta="http://www.cellml.org/metadata/1.0#" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <import xlink:href="Units/Units.cellml">
+        <units name="mJ_per_mol" units_ref="mJ_per_mol"/>
+        <units name="mol_per_mJ" units_ref="mol_per_mJ"/>
+        <units name="mV" units_ref="mV"/>
+        <units name="mM" units_ref="mM"/>
+        <units name="C_per_mol" units_ref="C_per_mol"/>
+        <units name="mJ_per_mol_per_kelvin" units_ref="mJ_per_mol_per_kelvin"/>
+        <units name="umol_per_s_per_cm2" units_ref="umol_per_s_per_cm2"/>
+    </import>
+    <component name="H_ATPase">
+        <variable name="psi" public_interface="in" units="mV"/>
+        <variable name="H_int" public_interface="in" units="mM"/>
+        <variable name="H_ext" public_interface="in" units="mM"/>
+        <variable name="mu_H" units="mJ_per_mol"/>
+        <variable initial_value="2.1e-6" name="mu_0" units="mJ_per_mol"/>
+        <variable initial_value="0.4e-6" name="xi" units="mol_per_mJ"/>
+        <variable initial_value="96485" name="F" units="C_per_mol"/>
+        <variable initial_value="8314.41" name="R" units="mJ_per_mol_per_kelvin"/>
+        <variable initial_value="300" name="T" units="kelvin"/>
+        <variable initial_value="-1.57" name="z" units="dimensionless"/>
+        <variable initial_value="0.0018" name="J_Vtype_H_Max" public_interface="out" units="umol_per_s_per_cm2"/>
+        <variable name="J_Vtype_H" public_interface="out" units="umol_per_s_per_cm2"/>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply id="electrochemical_potential_difference_calculation">
+                <eq/>
+                <ci>mu_H</ci>
+                <apply>
+                    <plus/>
+                    <apply>
+                        <times/>
+                        <ci>R</ci>
+                        <ci>T</ci>
+                        <apply>
+                            <ln/>
+                            <apply>
+                                <divide/>
+                                <ci>H_ext</ci>
+                                <ci>H_int</ci>
+                            </apply>
+                        </apply>
+                    </apply>
+                    <apply>
+                        <times/>
+                        <ci>z</ci>
+                        <ci>F</ci>
+                        <ci>psi</ci>
+                    </apply>
+                </apply>
+            </apply>
+            <apply id="H_flux">
+                <eq/>
+                <ci>J_Vtype_H</ci>
+                <apply>
+                    <divide/>
+                    <ci>J_Vtype_H_Max</ci>
+                    <apply>
+                        <plus/>
+                        <cn cellml:units="dimensionless">1</cn>
+                        <apply>
+                            <exp/>
+                            <apply>
+                                <times/>
+                                <ci>xi</ci>
+                                <apply>
+                                    <minus/>
+                                    <ci>mu_H</ci>
+                                    <ci>mu_0</ci>
+                                </apply>
+                            </apply>
+                        </apply>
+                    </apply>
+                </apply>
+            </apply>
+        </math>
+    </component>
+    <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+        <rdf:Description xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="">
+            <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">A kinetic model of V-type H+-ATPase (proton pump)</dc:title>
+        </rdf:Description>
+        <rdf:Description xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="#Weinstein_2000_HATPase">
+            <bqs:reference xmlns:bqs="http://www.cellml.org/bqs/1.0#" rdf:parseType="Resource" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+                <dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:parseType="Resource" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+                    <bqs:subject_type xmlns:bqs="http://www.cellml.org/bqs/1.0#">keyword</bqs:subject_type>
+                    <rdf:value xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+                        <rdf:Bag xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+                            <rdf:li xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">protein module</rdf:li>
+                        </rdf:Bag>
+                    </rdf:value>
+                </dc:subject>
+            </bqs:reference>
+        </rdf:Description>
+    </rdf:RDF>
+    <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+        <rdf:Description xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="">
+            <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">A kinetic model of V-type H+-ATPase (proton pump)</dc:title>
+        </rdf:Description>
+        <rdf:Description xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="#Weinstein_2000_HATPase">
+            <bqs:reference xmlns:bqs="http://www.cellml.org/bqs/1.0#" rdf:parseType="Resource" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+                <dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:parseType="Resource" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+                    <bqs:subject_type xmlns:bqs="http://www.cellml.org/bqs/1.0#">keyword</bqs:subject_type>
+                    <rdf:value xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+                        <rdf:Bag xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+                            <rdf:li xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">protein module</rdf:li>
+                        </rdf:Bag>
+                    </rdf:value>
+                </dc:subject>
+            </bqs:reference>
+        </rdf:Description>
+    </rdf:RDF>
+</model>
